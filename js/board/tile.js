@@ -1,15 +1,11 @@
-import { Piece } from "../pieces/piece.js";
-import { PIECES, COLORS } from "../pieces/constants.js";
+import { Piece } from "./piece.js";
+import { PIECES, COLORS } from "./constants.js";
 class Tile {
   constructor(x, y, color, piece = null) {
     this.x = x;
     this.y = y;
     this.color = color;
     this.piece = piece ? piece : null;
-  }
-
-  getCoordinates() {
-    return { x: this.x, y: this.y };
   }
 
   drawTile() {

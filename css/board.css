@@ -11,4 +11,17 @@
   width: 70px;
   height: 70px;
   box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.piece {
+  width: 70px;
+  height: 70px;
+  align-items: center;
+  justify-content: center;
+}
+
+.none-piece {
+  display: none;
 }
