@@ -15,10 +15,12 @@ class Board {
   addListeners() {
     const tileElements = document.querySelectorAll(".tile");
     tileElements.forEach((tileElement) => {
+      const type = tileElement.firstChild.dataset.type;
+      if (tileElement.firstChild.dataset.type === "none") return;
       tileElement.addEventListener("click", (event) => {
         const x = parseInt(event.currentTarget.getAttribute("data-x"));
         const y = parseInt(event.currentTarget.getAttribute("data-y"));
-        console.log(`Tile clicked at (${x}, ${y})`);
+        console.log(`${type} clicked at (${x}, ${y})`);
       });
     });
   }
