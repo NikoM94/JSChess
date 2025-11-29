@@ -12,10 +12,10 @@ class Board {
 
   createBoard() {
     console.log("Creating board...");
-    for (let i = 0; i < ROWS; i++) {
+    for (let i = 1; i <= ROWS; i++) {
       let row = [];
-      for (let j = 0; j < COLS; j++) {
-        let color = (i + j) % 2 === 0 ? "white" : "black";
+      for (let j = 1; j <= COLS; j++) {
+        let color = (i + j) % 2 === 0 ? "#E0D5EA" : "#957AB0";
         row.push(new Tile(i, j, color));
         console.log(`Created tile at (${i}, ${j}) with color ${color}`);
       }

@@ -1,8 +1,11 @@
+import { Piece } from "../pieces/piece.js";
+import { PIECES, COLORS } from "../pieces/constants.js";
 class Tile {
-  constructor(x, y, color) {
+  constructor(x, y, color, piece = null) {
     this.x = x;
     this.y = y;
     this.color = color;
+    this.piece = piece ? piece : null;
   }
 
   getCoordinates() {
