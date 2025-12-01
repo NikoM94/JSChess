@@ -12,7 +12,7 @@ class Tile {
     tileElement.setAttribute("data-x", this.x);
     tileElement.setAttribute("data-y", this.y);
     tileElement.style.backgroundColor = this.color;
-    if (this.piece) {
+    if (this.piece.type !== "none") {
       const pieceElement = this.piece.drawPiece();
       pieceElement.draggable = true;
       pieceElement.addEventListener("dragstart", (event) => {

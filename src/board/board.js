@@ -20,31 +20,24 @@ class Board {
   addListeners() {
     const tileElements = document.querySelectorAll(".tile");
     tileElements.forEach((tileElement) => {
-      const firstChild = tileElement.firstChild;
-      if (!firstChild) return;
-      if (firstChild.dataset.type === "none") {
-        tileElement.addEventListener("drop", (event) => {
-          const id = event.dataTransfer.getData("text/plain");
-          const draggable = document.getElementById(id);
-          const target = event.currentTarget;
-          const x = parseInt(target.getAttribute("data-x"));
-          const y = parseInt(target.getAttribute("data-y"));
-          target.appendChild(draggable);
-          console.log(`Empty tile dropped on at (${x}, ${y})`);
-        });
-      }
-      const type = firstChild.dataset.type;
-      tileElement.addEventListener("click", (event) => {
+      tileElement.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+      tileElement.addEventListener("drop", (event) => {
+        const id = event.dataTransfer.getData("text/plain");
+        const draggable = document.getElementById(id);
         const target = event.currentTarget;
+        console.log(`draggable: ${draggable}`);
+        console.log(`target: ${target}`);
         const x = parseInt(target.getAttribute("data-x"));
         const y = parseInt(target.getAttribute("data-y"));
-        console.log(`${type} clicked at (${x}, ${y})`);
+        target.appendChild(draggable);
+        console.log(`Empty tile dropped on at (${x}, ${y})`);
       });
       tileElement.addEventListener("dragstart", (event) => {
         const target = event.currentTarget;
         const x = parseInt(target.getAttribute("data-x"));
         const y = parseInt(target.getAttribute("data-y"));
-        console.log(`${type} dragged from (${x}, ${y})`);
       });
     });
   }
@@ -57,7 +50,7 @@ class Board {
         const pieceType = BOARD_PRESET.standard[i - 1][j - 1].split("_")[0];
         const pieceColor = BOARD_PRESET.standard[i - 1][j - 1].split("_")[1];
         if (pieceType === "none") {
-          const piece = new Piece(pieceType, pieceColor, i, j);
+          const piece = new Piece(pieceType, pieceColor, "", i, j);
           row.push(new Tile(i, j, color, piece));
         } else {
           const piece = new Piece(
