@@ -1,5 +1,3 @@
-import { Piece } from "./piece.js";
-import { PIECES, COLORS } from "./constants.js";
 class Tile {
   constructor(x, y, color, piece = null) {
     this.x = x;
@@ -16,6 +14,10 @@ class Tile {
     tileElement.style.backgroundColor = this.color;
     if (this.piece) {
       const pieceElement = this.piece.drawPiece();
+      pieceElement.draggable = true;
+      pieceElement.addEventListener("dragstart", (event) => {
+        event.dataTransfer.setData("text/plain", pieceElement.id);
+      });
       tileElement.appendChild(pieceElement);
     }
     return tileElement;
