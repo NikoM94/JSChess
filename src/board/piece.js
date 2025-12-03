@@ -6,6 +6,7 @@ class Piece {
     this.imageSrc = imageSrc;
     this.x = x;
     this.y = y;
+    this.id = `piece_${this.x}_${this.y}`;
   }
   drawPiece() {
     const pieceElement = document.createElement("img");

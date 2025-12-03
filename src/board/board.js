@@ -21,23 +21,16 @@ class Board {
     const tileElements = document.querySelectorAll(".tile");
     tileElements.forEach((tileElement) => {
       tileElement.addEventListener("dragover", (event) => {
-        event.preventDefault();
+        event.currentTarget.classList.add("drag-over");
+        console.log("dragover");
       });
       tileElement.addEventListener("drop", (event) => {
         const id = event.dataTransfer.getData("text/plain");
         const draggable = document.getElementById(id);
         const target = event.currentTarget;
-        console.log(`draggable: ${draggable}`);
-        console.log(`target: ${target}`);
         const x = parseInt(target.getAttribute("data-x"));
         const y = parseInt(target.getAttribute("data-y"));
         target.appendChild(draggable);
-        console.log(`Empty tile dropped on at (${x}, ${y})`);
-      });
-      tileElement.addEventListener("dragstart", (event) => {
-        const target = event.currentTarget;
-        const x = parseInt(target.getAttribute("data-x"));
-        const y = parseInt(target.getAttribute("data-y"));
       });
     });
   }

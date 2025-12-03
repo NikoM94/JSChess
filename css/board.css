@@ -25,3 +25,7 @@
 .none-piece {
   display: none;
 }
+
+.drag-over {
+  border: 2px dashed #666;
+}
