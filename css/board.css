@@ -29,3 +29,11 @@
 .drag-over {
   border: 2px dashed #666;
 }
+
+.can-move-here {
+  border: 2px dashed green;
+}
+
+.hide {
+  display: none;
+}

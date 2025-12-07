@@ -1,0 +1,27 @@
+-> dragstart applied to all tiles with a piece not of type none(makeMove function)
+-> dragstart event fired = get piece from pieces
+-> get all move x's and y's from selected piece
+-> get all tiles that correspond to move x's and y's
+-> set canMoveHere=true for those tiles, set data-canMoveHere=true for corresponding element
+-> apply .can-move-here style and drop for tiles that have dataset.canMoveHere=true
+-> on dragend and drop remove styles and invoke makeMove()
+
+-> makeMove()
+-> if destination tile has piece, put it in capturedPieces
+-> set pieceToMove to destination tile
+->
+
+Attach event listener to game-container and then use event.target to check which tile was clicked instead of attaching separate listeners to every tile
+
+for example:
+// Attach one listener to the board container
+boardContainer.addEventListener("click", (event) => {
+  // event.target is the tile <div> that was clicked
+  if (event.target.classList.contains("tile")) {
+    // Handle tile click
+    const tileIndex = event.target.dataset.index; // or use other attributes
+    handleTileClick(tileIndex);
+  }
+});
+
+Name all event listener functions to improve readability

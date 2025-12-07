@@ -1,47 +1,57 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
-import { Piece } from "./piece.js";
+import { Piece } from "../piece/piece.js";
+import { dragStart, dragEnd, dragOver, drop, dragLeave } from "./listeners.js";
 
 class Board {
   constructor() {
     this.tiles = [];
     this.pieces = [];
+    this.currentTurn = "white";
+    this.createBoard();
+    this.drawBoard();
+    this.moves = this.calculateAllMoves();
   }
 
   getTile(x, y) {
-    return this.tiles[y][x];
+    return this.tiles[x][y];
   }
 
   getPiece(x, y) {
-    const tile = this.getTile(x, y);
+    const tile = this.getTile(x - 1, y - 1);
     return tile.piece;
+  }
+
+  calculateAllMoves() {
+    let moves = [];
+    this.pieces.forEach((piece) => {
+      piece.calculateMoves(this);
+      piece.moves.forEach((move) => {
+        moves.push({ piece: piece, move: move });
+      });
+    });
+    this.moves = moves;
+    console.log(this.moves);
   }
 
   addListeners() {
     const tileElements = document.querySelectorAll(".tile");
     tileElements.forEach((tileElement) => {
-      tileElement.addEventListener("dragover", (event) => {
-        event.currentTarget.classList.add("drag-over");
-        console.log("dragover");
-      });
-      tileElement.addEventListener("drop", (event) => {
-        const id = event.dataTransfer.getData("text/plain");
-        const draggable = document.getElementById(id);
-        const target = event.currentTarget;
-        const x = parseInt(target.getAttribute("data-x"));
-        const y = parseInt(target.getAttribute("data-y"));
-        target.appendChild(draggable);
-      });
+      tileElement.addEventListener("dragstart", dragStart);
+      tileElement.addEventListener("dragend", dragEnd);
+      tileElement.addEventListener("dragover", dragOver);
+      tileElement.addEventListener("dragleave", dragLeave);
+      tileElement.addEventListener("drop", drop);
     });
   }
 
   createBoard() {
-    for (let i = 1; i <= ROWS; i++) {
+    for (let i = 0; i < ROWS; i++) {
       let row = [];
-      for (let j = 1; j <= COLS; j++) {
-        let color = (i + j) % 2 === 0 ? "#E0D5EA" : "#957AB0";
-        const pieceType = BOARD_PRESET.standard[i - 1][j - 1].split("_")[0];
-        const pieceColor = BOARD_PRESET.standard[i - 1][j - 1].split("_")[1];
+      for (let j = 0; j < COLS; j++) {
+        let color = (i + j + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0";
+        const pieceType = BOARD_PRESET.standard[i][j].split("_")[0];
+        const pieceColor = BOARD_PRESET.standard[i][j].split("_")[1];
         if (pieceType === "none") {
           const piece = new Piece(pieceType, pieceColor, "", i, j);
           row.push(new Tile(i, j, color, piece));
