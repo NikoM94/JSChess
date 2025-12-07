@@ -132,6 +132,7 @@ class Board {
     const target = event.target;
     target.appendChild(draggable);
     event.target.classList.remove("drag-over");
+    event.target.classList.remove("receiver-tile");
   }
 }
 
