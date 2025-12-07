@@ -37,3 +37,7 @@
 .hide {
   display: none;
 }
+
+.receiver-tile {
+  background-color: yellow;
+}

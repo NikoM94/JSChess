@@ -1,7 +1,7 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
 import { Piece } from "../piece/piece.js";
-import { dragStart, dragEnd, dragOver, drop, dragLeave } from "./listeners.js";
+import * as listeners from "./listeners.js";
 
 class Board {
   constructor() {
@@ -11,6 +11,9 @@ class Board {
     this.createBoard();
     this.drawBoard();
     this.moves = this.calculateAllMoves();
+    this.selectedPiece = null;
+    this.selectedMoves = [];
+    this.receiverTiles = [];
   }
 
   getTile(x, y) {
@@ -30,19 +33,16 @@ class Board {
         moves.push({ piece: piece, move: move });
       });
     });
-    this.moves = moves;
-    console.log(this.moves);
+    return moves;
   }
 
   addListeners() {
-    const tileElements = document.querySelectorAll(".tile");
-    tileElements.forEach((tileElement) => {
-      tileElement.addEventListener("dragstart", dragStart);
-      tileElement.addEventListener("dragend", dragEnd);
-      tileElement.addEventListener("dragover", dragOver);
-      tileElement.addEventListener("dragleave", dragLeave);
-      tileElement.addEventListener("drop", drop);
-    });
+    const boardElement = document.querySelector(".game-container");
+    boardElement.addEventListener("dragstart", this.dragStart.bind(this));
+    boardElement.addEventListener("dragover", this.dragOver.bind(this));
+    boardElement.addEventListener("dragleave", this.dragLeave.bind(this));
+    boardElement.addEventListener("drop", this.drop.bind(this));
+    boardElement.addEventListener("dragend", this.dragEnd.bind(this));
   }
 
   createBoard() {
@@ -79,7 +79,59 @@ class Board {
         boardElement.appendChild(tileElement);
       }
     }
+    console.log(this.pieces);
     this.addListeners();
+  }
+  dragStart(event) {
+    console.log("dragstart");
+    event.target.classList.add("selected-piece");
+    let pieceId = event.target.id;
+    let pieceY = parseInt(pieceId.split("_")[0]);
+    let pieceX = parseInt(pieceId.split("_")[1]);
+    this.selectedPiece = this.getPiece(pieceX + 1, pieceY + 1);
+    this.selectedMoves = this.selectedPiece.moves;
+    let receiverTiles = [];
+    this.selectedMoves.forEach((move) => {
+      let tile = this.getTile(move.x, move.y);
+      receiverTiles.push(tile);
+    });
+    receiverTiles.forEach((tile) => {
+      let tileElement = document.getElementById(`tile_${tile.y}_${tile.x}`);
+      tileElement.classList.add("receiver-tile");
+    });
+    this.receiverTiles = receiverTiles;
+    console.log(this.receiverTiles);
+    event.dataTransfer.setData("text/plain", event.target.id);
+    setTimeout(() => {
+      event.target.classList.add("hide");
+    }, 0);
+  }
+
+  dragEnd(event) {
+    console.log("dragend");
+    event.target.classList.remove("hide");
+    event.target.classList.remove("selected-piece");
+  }
+
+  dragOver(event) {
+    event.preventDefault();
+    event.target.classList.add("drag-over");
+    console.log("dragover");
+  }
+
+  dragLeave(event) {
+    event.target.classList.remove("drag-over");
+    console.log("dragleave");
+  }
+
+  drop(event) {
+    if (!event.target.classList.contains("receiver-tile")) return;
+    console.log("drop");
+    const id = event.dataTransfer.getData("text/plain");
+    const draggable = document.getElementById(id);
+    const target = event.target;
+    target.appendChild(draggable);
+    event.target.classList.remove("drag-over");
   }
 }
 

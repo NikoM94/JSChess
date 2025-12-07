@@ -6,14 +6,14 @@ class Piece {
     this.imageSrc = imageSrc;
     this.x = x;
     this.y = y;
-    this.id = `piece_${this.x}_${this.y}`;
+    this.id = `${this.x}_${this.y}`;
     this.moves = [];
   }
 
   drawPiece() {
     const pieceElement = document.createElement("img");
     pieceElement.classList.add("piece");
-    pieceElement.id = `piece_${this.y}_${this.x}`;
+    pieceElement.id = `${this.y}_${this.x}`;
     pieceElement.setAttribute("data-type", this.type);
     pieceElement.setAttribute("data-color", this.color);
     if (this.imageSrc == "") {
