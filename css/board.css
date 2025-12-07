@@ -39,5 +39,5 @@
 }
 
 .receiver-tile {
-  background-color: yellow;
+  border: 4px dashed blue;
 }

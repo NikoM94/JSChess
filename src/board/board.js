@@ -96,7 +96,7 @@ class Board {
       receiverTiles.push(tile);
     });
     receiverTiles.forEach((tile) => {
-      let tileElement = document.getElementById(`tile_${tile.y}_${tile.x}`);
+      let tileElement = document.getElementById(`tile_${tile.x}_${tile.y}`);
       tileElement.classList.add("receiver-tile");
     });
     this.receiverTiles = receiverTiles;
@@ -132,7 +132,9 @@ class Board {
     const target = event.target;
     target.appendChild(draggable);
     event.target.classList.remove("drag-over");
-    event.target.classList.remove("receiver-tile");
+    document.querySelectorAll(".receiver-tile").forEach((tile) => {
+      tile.classList.remove("receiver-tile");
+    });
   }
 }
 

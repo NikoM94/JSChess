@@ -37,21 +37,10 @@ class Piece {
   calculatePawnMoves(board) {
     const dir = this.color === "white" ? -1 : 1;
     const destination = board.getTile(this.x + dir, this.y);
+    console.log(destination.x, destination.y);
     const startRow = this.color === "white" ? 6 : 1;
-    //forward 1
     if (destination && destination.piece.type === "none") {
       this.moves.push({ x: this.x + dir, y: this.y });
-    }
-    //forward 2
-    if (this.x === startRow) {
-      const twoStepDestination = board.getTile(this.x + 2 * dir, this.y);
-      if (
-        twoStepDestination &&
-        twoStepDestination.piece.type === "none" &&
-        destination.piece.type === "none"
-      ) {
-        this.moves.push({ x: this.x + 2 * dir, y: this.y });
-      }
     }
   }
 }
