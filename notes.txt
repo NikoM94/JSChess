@@ -11,17 +11,5 @@
 -> set pieceToMove to destination tile
 ->
 
-Attach event listener to game-container and then use event.target to check which tile was clicked instead of attaching separate listeners to every tile
 
-for example:
-// Attach one listener to the board container
-boardContainer.addEventListener("click", (event) => {
-  // event.target is the tile <div> that was clicked
-  if (event.target.classList.contains("tile")) {
-    // Handle tile click
-    const tileIndex = event.target.dataset.index; // or use other attributes
-    handleTileClick(tileIndex);
-  }
-});
-
-Name all event listener functions to improve readability
+refactor x/y to be consistently row/col instead of having to guess which is which!!!!!!!!

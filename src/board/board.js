@@ -1,7 +1,7 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
 import { Piece } from "../piece/piece.js";
-
+// TODO: Refactor so all internal logic is updated, then board is rewdrawn from scratch after each move instead of mixing DOM manipulation and internal state updates
 class Board {
   constructor() {
     this.tiles = [];
@@ -16,6 +16,7 @@ class Board {
   }
 
   getTile(x, y) {
+    console.log(`Getting tile at (${x}, ${y})`);
     return this.tiles[x][y];
   }
 
@@ -78,9 +79,10 @@ class Board {
         boardElement.appendChild(tileElement);
       }
     }
-    console.log(this.pieces);
+    // console.log(this.pieces);
     this.addListeners();
   }
+
   dragStart(event) {
     console.log("dragstart");
     event.target.classList.add("selected-piece");
@@ -125,29 +127,53 @@ class Board {
 
   drop(event) {
     if (!event.target.classList.contains("receiver-tile")) return;
-    console.log("drop");
-    const id = event.dataTransfer.getData("text/plain");
-    const draggable = document.getElementById(id);
-    const target = event.target;
-    target.firstChild.remove();
-    let movedPiece = this.getTile(
-      parseInt(id.split("_")[1]),
-      parseInt(id.split("_")[0]),
-    ).getPiece();
-    console.log(movedPiece);
-    movedPiece.x = parseInt(target.id.split("_")[1]);
-    movedPiece.y = parseInt(target.id.split("_")[2]);
-    movedPiece.id = `${movedPiece.x}_${movedPiece.y}`;
-    target.appendChild(movedPiece.drawPiece());
-    document.getElementById(id).remove();
+    const sourceId = event.dataTransfer.getData("text/plain");
+    const [targetX, targetY] = [
+      parseInt(event.target.id.split("_")[1]),
+      parseInt(event.target.id.split("_")[2]),
+    ];
+
+    // Update internal game state only
+    this.movePiece(sourceId, targetX, targetY);
+
+    // DOM updates (can be moved elsewhere)
+    event.target.firstChild?.remove();
+    event.target.appendChild(document.getElementById(sourceId));
     event.target.classList.remove("drag-over");
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
       tile.classList.remove("receiver-tile");
     });
-    // update board state
-    // refactor this shit to its own function
-    //this.pieces.remove()
+  }
+
+  movePiece(sourceId, targetX, targetY) {
+    let movedPiece = this.getTile(
+      parseInt(sourceId.split("_")[1]),
+      parseInt(sourceId.split("_")[0]),
+    ).getPiece();
+    movedPiece.x = targetX;
+    movedPiece.y = targetY;
+    movedPiece.id = `${targetX}_${targetY}`;
+
+    // Remove old piece from pieces array
+    this.pieces = this.pieces.filter(
+      (piece) => !(piece.x === movedPiece.x && piece.y === movedPiece.y),
+    );
+
+    // Add updated piece
+    this.pieces.push(
+      new Piece(
+        movedPiece.type,
+        movedPiece.color,
+        `../../assets/${movedPiece.color}_${movedPiece.type}.svg`,
+        targetX,
+        targetY,
+      ),
+    );
+
     this.moves = this.calculateAllMoves();
+    console.log(
+      `this.pieces after drop: ${this.pieces}\nthis.moves after drop: ${this.moves}`,
+    );
   }
 }
 
