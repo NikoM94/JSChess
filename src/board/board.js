@@ -1,7 +1,6 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
 import { Piece } from "../piece/piece.js";
-import * as listeners from "./listeners.js";
 
 class Board {
   constructor() {
@@ -130,11 +129,25 @@ class Board {
     const id = event.dataTransfer.getData("text/plain");
     const draggable = document.getElementById(id);
     const target = event.target;
-    target.appendChild(draggable);
+    target.firstChild.remove();
+    let movedPiece = this.getTile(
+      parseInt(id.split("_")[1]),
+      parseInt(id.split("_")[0]),
+    ).getPiece();
+    console.log(movedPiece);
+    movedPiece.x = parseInt(target.id.split("_")[1]);
+    movedPiece.y = parseInt(target.id.split("_")[2]);
+    movedPiece.id = `${movedPiece.x}_${movedPiece.y}`;
+    target.appendChild(movedPiece.drawPiece());
+    document.getElementById(id).remove();
     event.target.classList.remove("drag-over");
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
       tile.classList.remove("receiver-tile");
     });
+    // update board state
+    // refactor this shit to its own function
+    //this.pieces.remove()
+    this.moves = this.calculateAllMoves();
   }
 }
 

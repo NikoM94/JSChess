@@ -8,6 +8,14 @@ class Tile {
     this.canMoveHere = false;
   }
 
+  getPiece() {
+    return this.piece;
+  }
+
+  setPiece(piece) {
+    this.piece = piece;
+  }
+
   getCoordinates() {
     return { x: this.x, y: this.y };
   }
