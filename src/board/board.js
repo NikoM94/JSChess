@@ -114,6 +114,7 @@ class Board {
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
+    this.cleanUpDOM();
   }
 
   dragOver(event) {
@@ -150,10 +151,15 @@ class Board {
     const newPieceId = event.target.id.split("_").slice(1).join("_");
     document.getElementById(sourceId).id = newPieceId;
     event.target.classList.remove("drag-over");
+    this.cleanUpDOM();
+  }
+
+  cleanUpDOM() {
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
       tile.classList.remove("receiver-tile");
     });
   }
+
   movePiece(newX, newY, oldX, oldY) {
     // Find the piece to move
     let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
