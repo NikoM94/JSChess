@@ -20,6 +20,10 @@ class Tile {
     this.piece = null;
   }
 
+  isEmpty() {
+    return this.piece === null || this.piece.type === "none";
+  }
+
   getCoordinates() {
     return { x: this.x, y: this.y };
   }

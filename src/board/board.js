@@ -1,7 +1,6 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
 import { Piece } from "../piece/piece.js";
-// TODO: Refactor so all internal logic is updated, then board is rewdrawn from scratch after each move instead of mixing DOM manipulation and internal state updates
 class Board {
   constructor() {
     this.tiles = [];
@@ -115,7 +114,6 @@ class Board {
     this.selectedMoves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
-    this.moves = this.calculateAllMoves();
     this.cleanUpDOM();
   }
 
