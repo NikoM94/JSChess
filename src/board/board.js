@@ -92,7 +92,9 @@ class Board {
       let tile = this.getTile(move.x, move.y);
       receiverTiles.push(tile);
     });
-    console.log(`this.selectedmoves: ${this.selectedMoves}`);
+    this.selectedMoves.forEach((move) => {
+      console.log(`Selected piece can move to: ${move.x}, ${move.y}`);
+    });
     receiverTiles.forEach((tile) => {
       let tileElement = document.getElementById(`tile_${tile.x}_${tile.y}`);
       tileElement.classList.add("receiver-tile");
