@@ -1,0 +1,47 @@
+export const PIECES_Val = {
+  none: 0,
+  pawn: 100,
+  rook: 300,
+  knight: 200,
+  bishop: 300,
+  queen: 500,
+  king: 100000,
+};
+
+export const UNIVERSAL_POSITION_Val = {
+  x4,
+  y4: 30,
+  x4,
+  y5: 30,
+  x5,
+  y4: 30,
+  x5,
+  x5: 30,
+  x1,
+  y8: 40,
+  x2,
+  y8: 40,
+  x3,
+  y8: 40,
+  x4,
+  y8: 40,
+  x5,
+  y8: 40,
+  x6,
+  y8: 40,
+  x7,
+  y8: 40,
+  x8,
+  x8: 40,
+};
+
+const Bishop_POSITION_Val = {
+  y4,
+  x1: 20,
+  y5,
+  x1: 20,
+  y4,
+  x8: 20,
+  y5,
+  x8: 20,
+};
