@@ -128,16 +128,18 @@ class Board {
   drop(event) {
     if (!event.target.classList.contains("receiver-tile")) return;
     const sourceId = event.dataTransfer.getData("text/plain");
-    const [currentX, currentY] = [
+    const [newX, newY] = [
       parseInt(event.target.id.split("_")[1]),
       parseInt(event.target.id.split("_")[2]),
     ];
 
-    console.log(`target x y: ${currentX}, ${currentY}`);
+    console.log(`new x y: ${newX}, ${newY}`);
     console.log(
       `selected piece: ${this.selectedPiece.type} at ${this.selectedPiece.x}, ${this.selectedPiece.y}`,
     );
-    this.movePiece(sourceId, currentX, currentY);
+    const oldX = this.selectedPiece.x;
+    const oldY = this.selectedPiece.y;
+    this.movePiece(sourceId, newX, newY, oldX, oldY);
     //debug print
     this.tiles.forEach((r) => {
       console.log(r);
@@ -152,49 +154,29 @@ class Board {
       tile.classList.remove("receiver-tile");
     });
   }
-  movePiece(sourceId, currentX, currentY) {
+  movePiece(sourceId, currentX, currentY, oldX, oldY) {
     // BUG: piece is not set to new tile in internal state
     // BUG: old tile is not removed, new tile is added to the end of the tile array
     // instead of appended to the correct position in the array
     // TODO: instead of removing and adding tiles and pieces, just update their properties
 
+    //UPDATE OLD AND NEW TILE
+    this.getTile(oldX, oldY).removePiece();
+    this.getTile(currentX, currentY).setPiece(null);
+
     // ADD NEW TILE AND PIECE
-    let movedPiece = this.getTile(
-      parseInt(sourceId.split("_")[1]),
-      parseInt(sourceId.split("_")[0]),
-    ).getPiece();
-    movedPiece.x = currentX;
-    movedPiece.y = currentY;
-    movedPiece.id = `${currentX}_${currentY}`;
-
-    this.pieces = this.pieces.filter(
-      (piece) => !(piece.x === movedPiece.x && piece.y === movedPiece.y),
-    );
-
-    this.pieces.push(
-      new Piece(
-        movedPiece.type,
-        movedPiece.color,
-        `../../assets/${movedPiece.color}_${movedPiece.type}.svg`,
-        currentX,
-        currentY,
-      ),
-    );
-
-    this.tiles.push(
-      new Tile(
-        currentX,
-        currentY,
-        (currentX + currentY + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0",
-        this.getPiece(currentX, currentY),
-      ),
-    );
+    // let movedPiece = this.getTile(
+    //   parseInt(sourceId.split("_")[1]),
+    //   parseInt(sourceId.split("_")[0]),
+    // ).getPiece();
+    // movedPiece.x = currentX;
+    // movedPiece.y = currentY;
+    // movedPiece.id = `${currentX}_${currentY}`;
 
     this.selectedMoves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
-    this.drawBoard();
   }
 }
 
