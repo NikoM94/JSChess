@@ -209,6 +209,7 @@ class Board {
     // Reset board state for next move
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.selectedMoves = [];
+    this.selectedPiece.moves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
