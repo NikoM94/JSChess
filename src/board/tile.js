@@ -6,6 +6,8 @@ class Tile {
     this.piece = piece ? piece : null;
     this.id = `tile_${this.x}_${this.y}`;
     this.canMoveHere = false;
+    this.backgroundImage =
+      this.piece.type !== "none" ? `url(${this.piece.imageSrc})` : "";
   }
 
   getPiece() {
@@ -34,8 +36,16 @@ class Tile {
     tileElement.setAttribute("data-x", this.x);
     tileElement.setAttribute("data-y", this.y);
     tileElement.setAttribute("id", this.id);
+    tileElement.setAttribute(
+      "piece-type",
+      this.piece ? this.piece.type : "none",
+    );
+    tileElement.setAttribute(
+      "piece-color",
+      this.piece ? this.piece.color : "none",
+    );
     tileElement.style.backgroundColor = this.color;
-    tileElement.appendChild(this.piece.drawPiece());
+    tileElement.style.backgroundImage = this.backgroundImage;
     return tileElement;
   }
 }

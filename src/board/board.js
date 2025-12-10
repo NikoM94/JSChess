@@ -10,8 +10,7 @@ class Board {
     this.drawBoard();
     this.moves = this.calculateAllMoves();
     this.selectedPiece = null;
-    this.selectedMoves = [];
-    this.receiverTiles = [];
+    this.clickedTile = null;
   }
 
   getTile(x, y) {
@@ -35,11 +34,46 @@ class Board {
 
   addListeners() {
     const boardElement = document.querySelector(".game-container");
-    boardElement.addEventListener("dragstart", this.dragStart.bind(this));
-    boardElement.addEventListener("dragover", this.dragOver.bind(this));
-    boardElement.addEventListener("dragleave", this.dragLeave.bind(this));
-    boardElement.addEventListener("dragend", this.dragEnd.bind(this));
-    boardElement.addEventListener("drop", this.drop.bind(this));
+    boardElement.addEventListener("click", this.onClickTile.bind(this));
+  }
+
+  onClickTile(event) {
+    const target = event.target;
+    if (!target.classList.contains("tile")) return;
+    if (!this.selectedPiece && !this.clickedTile) {
+      const x = parseInt(target.getAttribute("data-x"));
+      const y = parseInt(target.getAttribute("data-y"));
+      this.clickedTile = this.getTile(x, y);
+      this.selectedPiece = this.clickedTile.getPiece();
+      const moves = this.selectedPiece.moves;
+      moves.forEach((move) => {
+        const tileElement = document.getElementById(`tile_${move.x}_${move.y}`);
+        tileElement.classList.add("receiver-tile");
+      });
+    } else {
+      const x = parseInt(target.getAttribute("data-x"));
+      const y = parseInt(target.getAttribute("data-y"));
+      if (
+        this.selectedPiece &&
+        this.selectedPiece.moves.some((move) => move.x === x && move.y === y)
+      ) {
+        console.log(`this.selectedPiece: ${this.selectedPiece.imageSrc}`);
+        const oldX = this.selectedPiece.x;
+        const oldY = this.selectedPiece.y;
+        const newTile = document.getElementById(`tile_${x}_${y}`);
+        newTile.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
+        const oldTile = document.getElementById(
+          `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
+        );
+        oldTile.style.backgroundImage = "";
+        this.movePiece(x, y, oldX, oldY);
+      }
+      document.querySelectorAll(".receiver-tile").forEach((tile) => {
+        tile.classList.remove("receiver-tile");
+      });
+      this.selectedPiece = null;
+      this.clickedTile = null;
+    }
   }
 
   createBoard() {
@@ -79,87 +113,6 @@ class Board {
     this.addListeners();
   }
 
-  dragStart(event) {
-    event.target.classList.add("selected-piece");
-    let pieceId = event.target.id;
-    let pieceX = parseInt(pieceId.split("_")[0]);
-    let pieceY = parseInt(pieceId.split("_")[1]);
-    this.selectedPiece = this.getPiece(pieceX + 1, pieceY + 1);
-    this.selectedMoves = this.selectedPiece.moves;
-    let receiverTiles = [];
-    this.selectedMoves.forEach((move) => {
-      let tile = this.getTile(move.x, move.y);
-      receiverTiles.push(tile);
-    });
-    this.selectedMoves.forEach((move) => {
-      console.log(`Selected piece can move to: ${move.x}, ${move.y}`);
-    });
-    receiverTiles.forEach((tile) => {
-      let tileElement = document.getElementById(`tile_${tile.x}_${tile.y}`);
-      tileElement.classList.add("receiver-tile");
-    });
-    this.receiverTiles = receiverTiles;
-    event.dataTransfer.setData("text/plain", event.target.id);
-    setTimeout(() => {
-      event.target.classList.add("hide");
-    }, 0);
-  }
-
-  dragEnd(event) {
-    event.target.classList.remove("hide");
-    event.target.classList.remove("selected-piece");
-    document.querySelectorAll(".receiver-tile").forEach((tile) => {
-      tile.classList.remove("receiver-tile");
-    });
-    this.selectedMoves = [];
-    this.receiverTiles = [];
-    this.selectedPiece = null;
-    this.cleanUpDOM();
-  }
-
-  dragOver(event) {
-    event.preventDefault();
-    event.target.classList.add("drag-over");
-  }
-
-  dragLeave(event) {
-    event.target.classList.remove("drag-over");
-  }
-
-  drop(event) {
-    if (!event.target.classList.contains("receiver-tile")) return;
-    const sourceId = event.dataTransfer.getData("text/plain");
-    const [newX, newY] = [
-      parseInt(event.target.id.split("_")[1]),
-      parseInt(event.target.id.split("_")[2]),
-    ];
-
-    console.log(`new x y: ${newX}, ${newY}`);
-    console.log(
-      `selected piece: ${this.selectedPiece.type} at ${this.selectedPiece.x}, ${this.selectedPiece.y}`,
-    );
-    const oldX = this.selectedPiece.x;
-    const oldY = this.selectedPiece.y;
-    this.movePiece(newX, newY, oldX, oldY);
-    //debug print
-    this.tiles.forEach((r) => {
-      console.log(r);
-    });
-
-    event.target.firstChild.remove();
-    event.target.appendChild(document.getElementById(sourceId));
-    const newPieceId = event.target.id.split("_").slice(1).join("_");
-    document.getElementById(sourceId).id = newPieceId;
-    event.target.classList.remove("drag-over");
-    this.cleanUpDOM();
-  }
-
-  cleanUpDOM() {
-    document.querySelectorAll(".receiver-tile").forEach((tile) => {
-      tile.classList.remove("receiver-tile");
-    });
-  }
-
   movePiece(newX, newY, oldX, oldY) {
     // Find the piece to move
     let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
@@ -195,6 +148,10 @@ class Board {
 
     // Update new tile: assign reference to moved piece
     let newTile = this.getTile(newX, newY);
+    if (!newTile.isEmpty()) {
+      // Remove captured piece from pieces list
+      this.pieces = this.pieces.filter((p) => !(p.x === newX && p.y === newY));
+    }
     newTile.piece = pieceToMove;
     console.log(
       `New tile after move: ${newTile.piece.type} at ${newTile.piece.x}, ${newTile.piece.y}`,

@@ -10,19 +10,6 @@ class Piece {
     this.moves = [];
   }
 
-  drawPiece() {
-    const pieceElement = document.createElement("img");
-    pieceElement.classList.add("piece");
-    pieceElement.id = `${this.x}_${this.y}`;
-    pieceElement.setAttribute("data-type", this.type);
-    pieceElement.setAttribute("data-color", this.color);
-    if (this.imageSrc == "") {
-      pieceElement.classList.add("none-piece");
-    }
-    pieceElement.src = this.imageSrc;
-    return pieceElement;
-  }
-
   calculateMoves(board) {
     this.moves = [];
     switch (this.type) {
@@ -42,6 +29,28 @@ class Piece {
     const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.isEmpty()) {
       this.moves.push({ x: this.x + dir, y: this.y });
+      if (this.x === startRow) {
+        const doubleStep = board.getTile(this.x + 2 * dir, this.y);
+        if (doubleStep && doubleStep.isEmpty()) {
+          this.moves.push({ x: this.x + 2 * dir, y: this.y });
+        }
+      }
+    }
+    const captureLeft = board.getTile(this.x + dir, this.y - 1);
+    const captureRight = board.getTile(this.x + dir, this.y + 1);
+    if (
+      captureLeft &&
+      !captureLeft.isEmpty() &&
+      captureLeft.getPiece().color !== this.color
+    ) {
+      this.moves.push({ x: this.x + dir, y: this.y - 1 });
+    }
+    if (
+      captureRight &&
+      !captureRight.isEmpty() &&
+      captureRight.getPiece().color !== this.color
+    ) {
+      this.moves.push({ x: this.x + dir, y: this.y + 1 });
     }
   }
 }
