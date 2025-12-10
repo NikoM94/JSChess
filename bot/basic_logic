@@ -1,21 +1,56 @@
-int maxi( int depth ) {
-    if ( depth == 0 ) return evaluate();
-    int max = -oo;
-    for ( all moves) {
-        score = mini( depth - 1 );
-        if( score > max )
-            max = score;
+function minimax(game, depth, alpha, beta, maximizingPlayer) {
+  if (depth === 0 || game.game_over()) {
+    return evaluateBoard(game);
+  }
+
+  let moves = game.moves();
+
+  if (maximizingPlayer) {
+    let maxEval = -Infinity;
+
+    for (let move of moves) {
+      game.move(move);
+      let eval = minimax(game, depth - 1, alpha, beta, false);
+      game.undo();
+
+      maxEval = Math.max(maxEval, eval);
+      alpha = Math.max(alpha, eval);
+      if (beta <= alpha) break;
     }
-    return max;
+
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+
+    for (let move of moves) {
+      game.move(move);
+      let eval = minimax(game, depth - 1, alpha, beta, true);
+      game.undo();
+
+      minEval = Math.min(minEval, eval);
+      beta = Math.min(beta, eval);
+      if (beta <= alpha) break;
+    }
+
+    return minEval;
+  }
 }
 
-int mini( int depth ) {
-    if ( depth == 0 ) return -evaluate();
-    int min = +oo;
-    for ( all moves) {
-        score = maxi( depth - 1 );
-        if( score < min )
-            min = score;
+function bestMove(game, depth) {
+  let bestMove = null;
+  let bestValue = -Infinity;
+  let moves = game.moves();
+
+  for (let move of moves) {
+    game.move(move);
+    let boardValue = minimax(game, depth - 1, -Infinity, Infinity, false);
+    game.undo();
+
+    if (boardValue > bestValue) {
+      bestValue = boardValue;
+      bestMove = move;
     }
-    return min;
+  }
+
+  return bestMove;
 }
