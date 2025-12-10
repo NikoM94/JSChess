@@ -128,15 +128,16 @@ class Board {
   drop(event) {
     if (!event.target.classList.contains("receiver-tile")) return;
     const sourceId = event.dataTransfer.getData("text/plain");
-    const [targetX, targetY] = [
+    const [currentX, currentY] = [
       parseInt(event.target.id.split("_")[1]),
       parseInt(event.target.id.split("_")[2]),
     ];
 
-    console.log(`currentTarget id: ${event.currentTarget.id}`);
-    console.log(`target x y: ${targetX}, ${targetY}`);
-
-    this.movePiece(sourceId, targetX, targetY);
+    console.log(`target x y: ${currentX}, ${currentY}`);
+    console.log(
+      `selected piece: ${this.selectedPiece.type} at ${this.selectedPiece.x}, ${this.selectedPiece.y}`,
+    );
+    this.movePiece(sourceId, currentX, currentY);
     //debug print
     this.tiles.forEach((r) => {
       console.log(r);
@@ -152,7 +153,12 @@ class Board {
     });
   }
   movePiece(sourceId, currentX, currentY) {
-    // BUG: piece is not set to new tile in internal state!!!
+    // BUG: piece is not set to new tile in internal state
+    // BUG: old tile is not removed, new tile is added to the end of the tile array
+    // instead of appended to the correct position in the array
+    // TODO: instead of removing and adding tiles and pieces, just update their properties
+
+    // ADD NEW TILE AND PIECE
     let movedPiece = this.getTile(
       parseInt(sourceId.split("_")[1]),
       parseInt(sourceId.split("_")[0]),
@@ -188,6 +194,7 @@ class Board {
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
+    this.drawBoard();
   }
 }
 

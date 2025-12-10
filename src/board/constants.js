@@ -1,11 +1,11 @@
-const ROWS = 8;
-const COLS = 8;
-const COLORS = {
+export const ROWS = 8;
+export const COLS = 8;
+export const COLORS = {
   none: "none",
   white: "white",
   black: "black",
 };
-const PIECES = {
+export const PIECES = {
   none: "none",
   pawn: "pawn",
   rook: "rook",
@@ -15,7 +15,12 @@ const PIECES = {
   king: "king",
 };
 
-const BOARD_PRESET = {
+export const FILES_BLACK = ["a", "b", "c", "d", "e", "f", "g", "h"];
+export const RANKS_BLACK = ["1", "2", "3", "4", "5", "6", "7", "8"];
+export const FILES_WHITE = ["h", "g", "f", "e", "d", "c", "b", "a"];
+export const RANKS_WHITE = ["8", "7", "6", "5", "4", "3", "2", "1"];
+
+export const BOARD_PRESET = {
   standard: [
     [
       "rook_black",
@@ -63,5 +68,3 @@ const BOARD_PRESET = {
     ],
   ],
 };
-
-export { ROWS, COLS, COLORS, PIECES, BOARD_PRESET };
