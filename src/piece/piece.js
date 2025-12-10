@@ -1,4 +1,11 @@
-import { PIECES, COLORS } from "../board/constants.js";
+import {
+  PIECES,
+  COLORS,
+  ROOK_MOVES,
+  BISHOP_MOVES,
+  KING_MOVES,
+  KNIGHT_MOVES,
+} from "../board/constants.js";
 import { validCoordinate } from "../utils/boardutils.js";
 class Piece {
   constructor(type, color, imageSrc = "", x, y) {
@@ -39,13 +46,7 @@ class Piece {
   }
 
   calculateRookMoves(board) {
-    const directions = [
-      { x: 1, y: 0 },
-      { x: -1, y: 0 },
-      { x: 0, y: 1 },
-      { x: 0, y: -1 },
-    ];
-    for (const dir of directions) {
+    for (const dir of ROOK_MOVES) {
       let nx = this.x + dir.x;
       let ny = this.y + dir.y;
       while (validCoordinate(nx, ny)) {
@@ -65,13 +66,7 @@ class Piece {
   }
 
   calculateBishopMoves(board) {
-    const directions = [
-      { x: 1, y: 1 },
-      { x: 1, y: -1 },
-      { x: -1, y: 1 },
-      { x: -1, y: -1 },
-    ];
-    for (const dir of directions) {
+    for (const dir of BISHOP_MOVES) {
       let nx = this.x + dir.x;
       let ny = this.y + dir.y;
       while (validCoordinate(nx, ny)) {
@@ -96,17 +91,7 @@ class Piece {
   }
 
   calculateKingMoves(board) {
-    const kingMoves = [
-      { x: -1, y: -1 },
-      { x: -1, y: 0 },
-      { x: -1, y: 1 },
-      { x: 0, y: -1 },
-      { x: 0, y: 1 },
-      { x: 1, y: -1 },
-      { x: 1, y: 0 },
-      { x: 1, y: 1 },
-    ];
-    for (const move of kingMoves) {
+    for (const move of KING_MOVES) {
       const nx = this.x + move.x;
       const ny = this.y + move.y;
       if (validCoordinate(nx, ny)) {
@@ -122,17 +107,7 @@ class Piece {
   }
 
   calculateKnightMoves(board) {
-    const knightMoves = [
-      { x: -2, y: -1 },
-      { x: -2, y: 1 },
-      { x: -1, y: -2 },
-      { x: -1, y: 2 },
-      { x: 1, y: -2 },
-      { x: 1, y: 2 },
-      { x: 2, y: -1 },
-      { x: 2, y: 1 },
-    ];
-    for (const move of knightMoves) {
+    for (const move of KNIGHT_MOVES) {
       const nx = this.x + move.x;
       const ny = this.y + move.y;
       if (validCoordinate(nx, ny)) {

@@ -68,3 +68,39 @@ export const BOARD_PRESET = {
     ],
   ],
 };
+
+export const ROOK_MOVES = [
+  { x: 1, y: 0 },
+  { x: -1, y: 0 },
+  { x: 0, y: 1 },
+  { x: 0, y: -1 },
+];
+
+export const BISHOP_MOVES = [
+  { x: 1, y: 1 },
+  { x: 1, y: -1 },
+  { x: -1, y: 1 },
+  { x: -1, y: -1 },
+];
+
+export const KING_MOVES = [
+  { x: -1, y: -1 },
+  { x: -1, y: 0 },
+  { x: -1, y: 1 },
+  { x: 0, y: -1 },
+  { x: 0, y: 1 },
+  { x: 1, y: -1 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
+
+export const KNIGHT_MOVES = [
+  { x: -2, y: -1 },
+  { x: -2, y: 1 },
+  { x: -1, y: -2 },
+  { x: -1, y: 2 },
+  { x: 1, y: -2 },
+  { x: 1, y: 2 },
+  { x: 2, y: -1 },
+  { x: 2, y: 1 },
+];
