@@ -133,10 +133,14 @@ class Board {
       parseInt(event.target.id.split("_")[2]),
     ];
 
+    console.log(targetX, targetY);
+
     this.movePiece(sourceId, targetX, targetY);
 
     event.target.firstChild.remove();
     event.target.appendChild(document.getElementById(sourceId));
+    const newPieceId = event.target.id.split("_").slice(1).join("_");
+    document.getElementById(sourceId).id = newPieceId;
     event.target.classList.remove("drag-over");
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
       tile.classList.remove("receiver-tile");
