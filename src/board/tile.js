@@ -16,6 +16,10 @@ class Tile {
     this.piece = piece;
   }
 
+  removePiece() {
+    this.piece = null;
+  }
+
   getCoordinates() {
     return { x: this.x, y: this.y };
   }
