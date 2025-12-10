@@ -155,28 +155,64 @@ class Board {
     });
   }
   movePiece(newX, newY, oldX, oldY) {
-    //UPDATE OLD AND NEW TILE
+    // Find the piece to move
+    let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
+    console.log(
+      `pieceToMove: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
+    );
+    // Update piece coordinates
+    pieceToMove.x = newX;
+    pieceToMove.y = newY;
+    pieceToMove.id = `${newX}_${newY}`;
+    console.log(
+      `pieceToMove: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
+    );
+    this.pieces.forEach((p) => {
+      console.log(
+        `Pieces before doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
+      );
+    });
+
+    // Update old tile: set to empty piece object
     let oldTile = this.getTile(oldX, oldY);
-    oldTile.piece.x = oldX;
-    oldTile.piece.y = oldY;
-    oldTile.piece.id = `${oldX}_${oldY}`;
-    oldTile.piece.type = "none";
-    oldTile.piece.imageSrc = "";
-    oldTile.piece.color = "none";
+    oldTile.piece = {
+      x: oldX,
+      y: oldY,
+      id: `${oldX}_${oldY}`,
+      type: "none",
+      imageSrc: "",
+      color: "none",
+    };
+    console.log(
+      `Old tile after move: ${oldTile.piece.type} at ${oldTile.piece.x}, ${oldTile.piece.y}`,
+    );
 
+    // Update new tile: assign reference to moved piece
     let newTile = this.getTile(newX, newY);
-    newTile.piece.x = newX;
-    newTile.piece.y = newY;
-    newTile.piece.id = `${newX}_${newY}`;
-    newTile.piece.type = "pawn"; //MAKE DYNAMIC LATER
-    newTile.piece.imageSrc = `../../assets/white_pawn.svg`; //MAKE DYNAMIC LATER
-    newTile.piece.color = "white";
+    newTile.piece = pieceToMove;
+    console.log(
+      `New tile after move: ${newTile.piece.type} at ${newTile.piece.x}, ${newTile.piece.y}`,
+    );
 
-    //reset board state for next move
+    // Debug print for piece list
+    this.pieces.forEach((p) => {
+      console.log(
+        `Pieces after doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
+      );
+    });
+    // Reset board state for next move
+    this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.selectedMoves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
+    // Debug print for moves
+    console.log("All possible moves after move:");
+    this.moves.forEach((m) => {
+      console.log(
+        `Piece: ${m.piece.type} at ${m.piece.x}, ${m.piece.y} can move to ${m.move.x}, ${m.move.y}`,
+      );
+    });
   }
 }
 
