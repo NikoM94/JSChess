@@ -25,6 +25,7 @@ class Piece {
   calculatePawnMoves(board) {
     //TODO en passant, capture, promotion
     const dir = this.color === "white" ? -1 : 1;
+    if (this.x + dir < 0 || this.x + dir > 7) return;
     const destination = board.getTile(this.x + dir, this.y);
     const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.isEmpty()) {
