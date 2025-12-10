@@ -7,7 +7,7 @@ class Board {
     this.tiles = [];
     this.pieces = [];
     this.currentTurn = "white";
-    this.createBoard(); 
+    this.createBoard();
     this.drawBoard();
     this.moves = this.calculateAllMoves();
     this.selectedPiece = null;
@@ -133,9 +133,14 @@ class Board {
       parseInt(event.target.id.split("_")[2]),
     ];
 
-    console.log(targetX, targetY);
+    console.log(`currentTarget id: ${event.currentTarget.id}`);
+    console.log(`target x y: ${targetX}, ${targetY}`);
 
     this.movePiece(sourceId, targetX, targetY);
+    //debug print
+    this.tiles.forEach((r) => {
+      console.log(r);
+    });
 
     event.target.firstChild.remove();
     event.target.appendChild(document.getElementById(sourceId));
@@ -146,15 +151,15 @@ class Board {
       tile.classList.remove("receiver-tile");
     });
   }
-
-  movePiece(sourceId, targetX, targetY) {
+  movePiece(sourceId, currentX, currentY) {
+    // BUG: piece is not set to new tile in internal state!!!
     let movedPiece = this.getTile(
       parseInt(sourceId.split("_")[1]),
       parseInt(sourceId.split("_")[0]),
     ).getPiece();
-    movedPiece.x = targetX;
-    movedPiece.y = targetY;
-    movedPiece.id = `${targetX}_${targetY}`;
+    movedPiece.x = currentX;
+    movedPiece.y = currentY;
+    movedPiece.id = `${currentX}_${currentY}`;
 
     this.pieces = this.pieces.filter(
       (piece) => !(piece.x === movedPiece.x && piece.y === movedPiece.y),
@@ -165,17 +170,17 @@ class Board {
         movedPiece.type,
         movedPiece.color,
         `../../assets/${movedPiece.color}_${movedPiece.type}.svg`,
-        targetX,
-        targetY,
+        currentX,
+        currentY,
       ),
     );
 
     this.tiles.push(
       new Tile(
-        targetX,
-        targetY,
-        (targetX + targetY + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0",
-        this.getPiece(targetX, targetY),
+        currentX,
+        currentY,
+        (currentX + currentY + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0",
+        this.getPiece(currentX, currentY),
       ),
     );
 
