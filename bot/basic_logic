@@ -1,9 +1,10 @@
 function minimax(game, depth, alpha, beta, maximizingPlayer) {
   if (depth === 0 || game.game_over()) {
-    return evaluateBoard(game);
+    let eval = evaluateBoard(game);
+    return maximizingPlayer ? eval : -eval;
   }
 
-  let moves = game.moves();
+  let moves = game.moves({ verbose: true });
 
   if (maximizingPlayer) {
     let maxEval = -Infinity;
@@ -15,10 +16,12 @@ function minimax(game, depth, alpha, beta, maximizingPlayer) {
 
       maxEval = Math.max(maxEval, eval);
       alpha = Math.max(alpha, eval);
+
       if (beta <= alpha) break;
     }
 
     return maxEval;
+
   } else {
     let minEval = Infinity;
 
@@ -29,6 +32,7 @@ function minimax(game, depth, alpha, beta, maximizingPlayer) {
 
       minEval = Math.min(minEval, eval);
       beta = Math.min(beta, eval);
+
       if (beta <= alpha) break;
     }
 
@@ -39,15 +43,15 @@ function minimax(game, depth, alpha, beta, maximizingPlayer) {
 function bestMove(game, depth) {
   let bestMove = null;
   let bestValue = -Infinity;
-  let moves = game.moves();
+  let moves = game.moves({ verbose: true });
 
   for (let move of moves) {
     game.move(move);
-    let boardValue = minimax(game, depth - 1, -Infinity, Infinity, false);
+    let value = minimax(game, depth - 1, -Infinity, Infinity, false);
     game.undo();
 
-    if (boardValue > bestValue) {
-      bestValue = boardValue;
+    if (value > bestValue) {
+      bestValue = value;
       bestMove = move;
     }
   }
