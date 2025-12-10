@@ -16,7 +16,6 @@ class Board {
   }
 
   getTile(x, y) {
-    console.log(`Getting tile at (${x}, ${y})`);
     return this.tiles[x][y];
   }
 
@@ -79,12 +78,10 @@ class Board {
         boardElement.appendChild(tileElement);
       }
     }
-    // console.log(this.pieces);
     this.addListeners();
   }
 
   dragStart(event) {
-    console.log("dragstart");
     event.target.classList.add("selected-piece");
     let pieceId = event.target.id;
     let pieceY = parseInt(pieceId.split("_")[0]);
@@ -96,12 +93,12 @@ class Board {
       let tile = this.getTile(move.x, move.y);
       receiverTiles.push(tile);
     });
+    console.log(`this.selectedmoves: ${this.selectedMoves}`);
     receiverTiles.forEach((tile) => {
       let tileElement = document.getElementById(`tile_${tile.x}_${tile.y}`);
       tileElement.classList.add("receiver-tile");
     });
     this.receiverTiles = receiverTiles;
-    console.log(this.receiverTiles);
     event.dataTransfer.setData("text/plain", event.target.id);
     setTimeout(() => {
       event.target.classList.add("hide");
@@ -109,20 +106,24 @@ class Board {
   }
 
   dragEnd(event) {
-    console.log("dragend");
     event.target.classList.remove("hide");
     event.target.classList.remove("selected-piece");
+    document.querySelectorAll(".receiver-tile").forEach((tile) => {
+      tile.classList.remove("receiver-tile");
+    });
+    this.selectedMoves = [];
+    this.receiverTiles = [];
+    this.selectedPiece = null;
+    this.moves = this.calculateAllMoves();
   }
 
   dragOver(event) {
     event.preventDefault();
     event.target.classList.add("drag-over");
-    console.log("dragover");
   }
 
   dragLeave(event) {
     event.target.classList.remove("drag-over");
-    console.log("dragleave");
   }
 
   drop(event) {
@@ -133,11 +134,9 @@ class Board {
       parseInt(event.target.id.split("_")[2]),
     ];
 
-    // Update internal game state only
     this.movePiece(sourceId, targetX, targetY);
 
-    // DOM updates (can be moved elsewhere)
-    event.target.firstChild?.remove();
+    event.target.firstChild.remove();
     event.target.appendChild(document.getElementById(sourceId));
     event.target.classList.remove("drag-over");
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
@@ -154,12 +153,10 @@ class Board {
     movedPiece.y = targetY;
     movedPiece.id = `${targetX}_${targetY}`;
 
-    // Remove old piece from pieces array
     this.pieces = this.pieces.filter(
       (piece) => !(piece.x === movedPiece.x && piece.y === movedPiece.y),
     );
 
-    // Add updated piece
     this.pieces.push(
       new Piece(
         movedPiece.type,
@@ -170,10 +167,19 @@ class Board {
       ),
     );
 
-    this.moves = this.calculateAllMoves();
-    console.log(
-      `this.pieces after drop: ${this.pieces}\nthis.moves after drop: ${this.moves}`,
+    this.tiles.push(
+      new Tile(
+        targetX,
+        targetY,
+        (targetX + targetY + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0",
+        this.getPiece(targetX, targetY),
+      ),
     );
+
+    this.selectedMoves = [];
+    this.receiverTiles = [];
+    this.selectedPiece = null;
+    this.moves = this.calculateAllMoves();
   }
 }
 

@@ -13,3 +13,16 @@
 
 
 refactor x/y to be consistently row/col instead of having to guess which is which!!!!!!!!
+
+move execution internal logic:
+	store reference to previous tile | this comes from DOM
+	remove previous tile						 | need to also remove from DOM
+	grab reference to target tile		 | this comes from DOM
+	remove target tile						   | need to also remove from DOM
+	create new piece with data from previoustile, with updated x and y, add to new tile
+	create new tile with target tile x and y and add the piece to it
+	create new tile with previous x and y with none-piece
+
+	remove and add the elements to the DOM
+
+

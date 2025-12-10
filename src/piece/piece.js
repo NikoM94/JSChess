@@ -37,8 +37,7 @@ class Piece {
   calculatePawnMoves(board) {
     const dir = this.color === "white" ? -1 : 1;
     const destination = board.getTile(this.x + dir, this.y);
-    console.log(destination.x, destination.y);
-    const startRow = this.color === "white" ? 6 : 1;
+    // const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.piece.type === "none") {
       this.moves.push({ x: this.x + dir, y: this.y });
     }
