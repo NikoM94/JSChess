@@ -139,7 +139,7 @@ class Board {
     );
     const oldX = this.selectedPiece.x;
     const oldY = this.selectedPiece.y;
-    this.movePiece(sourceId, newX, newY, oldX, oldY);
+    this.movePiece(newX, newY, oldX, oldY);
     //debug print
     this.tiles.forEach((r) => {
       console.log(r);
@@ -154,25 +154,25 @@ class Board {
       tile.classList.remove("receiver-tile");
     });
   }
-  movePiece(sourceId, currentX, currentY, oldX, oldY) {
-    // BUG: piece is not set to new tile in internal state
-    // BUG: old tile is not removed, new tile is added to the end of the tile array
-    // instead of appended to the correct position in the array
-    // TODO: instead of removing and adding tiles and pieces, just update their properties
-
+  movePiece(newX, newY, oldX, oldY) {
     //UPDATE OLD AND NEW TILE
-    this.getTile(oldX, oldY).removePiece();
-    this.getTile(currentX, currentY).setPiece(null);
+    let oldTile = this.getTile(oldX, oldY);
+    oldTile.piece.x = oldX;
+    oldTile.piece.y = oldY;
+    oldTile.piece.id = `${oldX}_${oldY}`;
+    oldTile.piece.type = "none";
+    oldTile.piece.imageSrc = "";
+    oldTile.piece.color = "none";
 
-    // ADD NEW TILE AND PIECE
-    // let movedPiece = this.getTile(
-    //   parseInt(sourceId.split("_")[1]),
-    //   parseInt(sourceId.split("_")[0]),
-    // ).getPiece();
-    // movedPiece.x = currentX;
-    // movedPiece.y = currentY;
-    // movedPiece.id = `${currentX}_${currentY}`;
+    let newTile = this.getTile(newX, newY);
+    newTile.piece.x = newX;
+    newTile.piece.y = newY;
+    newTile.piece.id = `${newX}_${newY}`;
+    newTile.piece.type = "pawn"; //MAKE DYNAMIC LATER
+    newTile.piece.imageSrc = `../../assets/white_pawn.svg`; //MAKE DYNAMIC LATER
+    newTile.piece.color = "white";
 
+    //reset board state for next move
     this.selectedMoves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
