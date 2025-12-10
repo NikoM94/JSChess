@@ -7,7 +7,7 @@ class Board {
     this.tiles = [];
     this.pieces = [];
     this.currentTurn = "white";
-    this.createBoard();
+    this.createBoard(); 
     this.drawBoard();
     this.moves = this.calculateAllMoves();
     this.selectedPiece = null;
@@ -23,7 +23,6 @@ class Board {
     const tile = this.getTile(x - 1, y - 1);
     return tile.piece;
   }
-
   calculateAllMoves() {
     let moves = [];
     this.pieces.forEach((piece) => {
