@@ -1,0 +1,9 @@
+export const PIECES_Val = {
+  none: "none",
+  pawn: 10,
+  rook: 30,
+  knight: 20,
+  bishop: 30,
+  queen: 50,
+  king: 100000,
+};
