@@ -1,4 +1,4 @@
-// basic_val.js
+
 
 export const PIECES_VAL = {
   none: 0,
@@ -10,7 +10,6 @@ export const PIECES_VAL = {
   king: 20000
 };
 
-// Example positional values (simple version)
 export const POSITION_VAL = {
   pawn: [
     [0, 0, 0, 0, 0, 0, 0, 0],
