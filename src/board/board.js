@@ -1,5 +1,5 @@
 import { Tile } from "./tile.js";
-import { ROWS, COLS, BOARD_PRESET } from "./constants.js";
+import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
 class Board {
   constructor() {
@@ -11,6 +11,8 @@ class Board {
     this.moves = this.calculateAllMoves();
     this.selectedPiece = null;
     this.clickedTile = null;
+    this.enPassantPawn = null;
+    this.turn = COLORS.white;
   }
 
   getTile(x, y) {
@@ -40,6 +42,13 @@ class Board {
   onClickTile(event) {
     const target = event.target;
     if (!target.classList.contains("tile")) return;
+    // check turn
+    if (
+      target.getAttribute("piece-color") !== this.currentTurn &&
+      !this.selectedPiece
+    ) {
+      return;
+    }
     if (!this.selectedPiece && !this.clickedTile) {
       const x = parseInt(target.getAttribute("data-x"));
       const y = parseInt(target.getAttribute("data-y"));
@@ -118,20 +127,6 @@ class Board {
   movePiece(newX, newY, oldX, oldY) {
     // Find the piece to move
     let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
-    console.log(
-      `pieceToMove: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
-    );
-
-    console.log(
-      `pieceToMove updated type x y: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
-    );
-    // Debug print for piece list
-    // this.pieces.forEach((p) => {
-    //   console.log(
-    //     `Pieces before doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
-    //   );
-    // });
-
     // Update old tile: set to empty piece object
     let oldTile = this.getTile(oldX, oldY);
     oldTile.piece = {
@@ -142,10 +137,6 @@ class Board {
       imageSrc: "",
       color: "none",
     };
-    console.log(
-      `Old tile after move: ${oldTile.piece.type} at ${oldTile.piece.x}, ${oldTile.piece.y}`,
-    );
-
     // Update new tile: assign reference to moved piece
     let newTile = this.getTile(newX, newY);
     if (!newTile.isEmpty()) {
@@ -156,31 +147,27 @@ class Board {
     pieceToMove.x = newX;
     pieceToMove.y = newY;
     pieceToMove.id = `${newX}_${newY}`;
+    if (pieceToMove.type === "pawn" && pieceToMove.isFirstMove) {
+      // Handle en passant setup
+      if (Math.abs(newX - oldX) === 2) {
+        this.enPassantPawn = pieceToMove;
+        console.log(`En Passant pawn at ${pieceToMove.x}, ${pieceToMove.y}`);
+      } else {
+        this.enPassantPawn = null;
+      }
+    } else {
+      this.enPassantPawn = null;
+    }
+    pieceToMove.isFirstMove = false;
     newTile.piece = pieceToMove;
-    console.log(
-      `New tile after move: ${newTile.piece.type} at ${newTile.piece.x}, ${newTile.piece.y}`,
-    );
-
-    // Debug print for piece list
-    this.pieces.forEach((p) => {
-      console.log(
-        `Pieces after doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
-      );
-    });
     // Reset board state for next move
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.selectedMoves = [];
     this.selectedPiece.moves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
+    this.turn = COLORS.white ? COLORS.black : COLORS.white;
     this.moves = this.calculateAllMoves();
-    // Debug print for moves
-    // console.log("All possible moves after move:");
-    // this.moves.forEach((m) => {
-    //   console.log(
-    //     `Piece: ${m.piece.type} at ${m.piece.x}, ${m.piece.y} can move to ${m.move.x}, ${m.move.y}`,
-    //   );
-    // });
   }
 }
 

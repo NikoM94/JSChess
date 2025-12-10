@@ -8,6 +8,7 @@ class Piece {
     this.y = y;
     this.id = `${this.x}_${this.y}`;
     this.moves = [];
+    this.isFirstMove = true;
   }
 
   calculateMoves(board) {
@@ -23,7 +24,7 @@ class Piece {
   }
 
   calculatePawnMoves(board) {
-    //TODO en passant, capture, promotion
+    //TODO en passant, promotion
     const dir = this.color === "white" ? -1 : 1;
     if (this.x + dir < 0 || this.x + dir > 7) return;
     const destination = board.getTile(this.x + dir, this.y);
