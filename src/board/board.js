@@ -62,6 +62,8 @@ class Board {
         const oldY = this.selectedPiece.y;
         const newTile = document.getElementById(`tile_${x}_${y}`);
         newTile.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
+        newTile.setAttribute("piece-type", this.selectedPiece.type);
+        newTile.setAttribute("piece-color", this.selectedPiece.color);
         const oldTile = document.getElementById(
           `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
         );
@@ -119,18 +121,16 @@ class Board {
     console.log(
       `pieceToMove: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
     );
-    // Update piece coordinates
-    pieceToMove.x = newX;
-    pieceToMove.y = newY;
-    pieceToMove.id = `${newX}_${newY}`;
+
     console.log(
-      `pieceToMove: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
+      `pieceToMove updated type x y: ${pieceToMove.type} at ${pieceToMove.x}, ${pieceToMove.y}`,
     );
-    this.pieces.forEach((p) => {
-      console.log(
-        `Pieces before doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
-      );
-    });
+    // Debug print for piece list
+    // this.pieces.forEach((p) => {
+    //   console.log(
+    //     `Pieces before doing stuff to tiles: ${p.type} at ${p.x}, ${p.y}`,
+    //   );
+    // });
 
     // Update old tile: set to empty piece object
     let oldTile = this.getTile(oldX, oldY);
@@ -152,6 +152,10 @@ class Board {
       // Remove captured piece from pieces list
       this.pieces = this.pieces.filter((p) => !(p.x === newX && p.y === newY));
     }
+    // Update piece coordinates
+    pieceToMove.x = newX;
+    pieceToMove.y = newY;
+    pieceToMove.id = `${newX}_${newY}`;
     newTile.piece = pieceToMove;
     console.log(
       `New tile after move: ${newTile.piece.type} at ${newTile.piece.x}, ${newTile.piece.y}`,
@@ -171,12 +175,12 @@ class Board {
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
     // Debug print for moves
-    console.log("All possible moves after move:");
-    this.moves.forEach((m) => {
-      console.log(
-        `Piece: ${m.piece.type} at ${m.piece.x}, ${m.piece.y} can move to ${m.move.x}, ${m.move.y}`,
-      );
-    });
+    // console.log("All possible moves after move:");
+    // this.moves.forEach((m) => {
+    //   console.log(
+    //     `Piece: ${m.piece.type} at ${m.piece.x}, ${m.piece.y} can move to ${m.move.x}, ${m.move.y}`,
+    //   );
+    // });
   }
 }
 
