@@ -1,47 +1,25 @@
-export const PIECES_Val = {
+// basic_val.js
+
+export const PIECES_VAL = {
   none: 0,
   pawn: 100,
-  rook: 300,
-  knight: 200,
-  bishop: 300,
-  queen: 500,
-  king: 100000,
+  knight: 300,
+  bishop: 325,
+  rook: 500,
+  queen: 900,
+  king: 20000
 };
 
-export const UNIVERSAL_POSITION_Val = {
-  x4,
-  y4: 30,
-  x4,
-  y5: 30,
-  x5,
-  y4: 30,
-  x5,
-  x5: 30,
-  x1,
-  y8: 40,
-  x2,
-  y8: 40,
-  x3,
-  y8: 40,
-  x4,
-  y8: 40,
-  x5,
-  y8: 40,
-  x6,
-  y8: 40,
-  x7,
-  y8: 40,
-  x8,
-  x8: 40,
-};
-
-const Bishop_POSITION_Val = {
-  y4,
-  x1: 20,
-  y5,
-  x1: 20,
-  y4,
-  x8: 20,
-  y5,
-  x8: 20,
+// Example positional values (simple version)
+export const POSITION_VAL = {
+  pawn: [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 5, 5, 5, 5, 5, 5, 5],
+    [1, 1, 2, 3, 3, 2, 1, 1],
+    [0, 0, 0, 2, 2, 0, 0, 0],
+    [0, 0, 0, 2, 2, 0, 0, 0],
+    [1, -1, -2, 0, 0, -2, -1, 1],
+    [5, 5, 5, -5, -5, 5, 5, 5],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+  ]
 };
