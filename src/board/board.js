@@ -40,8 +40,8 @@ class Board {
     boardElement.addEventListener("dragstart", this.dragStart.bind(this));
     boardElement.addEventListener("dragover", this.dragOver.bind(this));
     boardElement.addEventListener("dragleave", this.dragLeave.bind(this));
-    boardElement.addEventListener("drop", this.drop.bind(this));
     boardElement.addEventListener("dragend", this.dragEnd.bind(this));
+    boardElement.addEventListener("drop", this.drop.bind(this));
   }
 
   createBoard() {
@@ -84,8 +84,8 @@ class Board {
   dragStart(event) {
     event.target.classList.add("selected-piece");
     let pieceId = event.target.id;
-    let pieceY = parseInt(pieceId.split("_")[0]);
-    let pieceX = parseInt(pieceId.split("_")[1]);
+    let pieceX = parseInt(pieceId.split("_")[0]);
+    let pieceY = parseInt(pieceId.split("_")[1]);
     this.selectedPiece = this.getPiece(pieceX + 1, pieceY + 1);
     this.selectedMoves = this.selectedPiece.moves;
     let receiverTiles = [];

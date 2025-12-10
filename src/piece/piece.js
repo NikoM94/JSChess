@@ -13,7 +13,7 @@ class Piece {
   drawPiece() {
     const pieceElement = document.createElement("img");
     pieceElement.classList.add("piece");
-    pieceElement.id = `${this.y}_${this.x}`;
+    pieceElement.id = `${this.x}_${this.y}`;
     pieceElement.setAttribute("data-type", this.type);
     pieceElement.setAttribute("data-color", this.color);
     if (this.imageSrc == "") {
