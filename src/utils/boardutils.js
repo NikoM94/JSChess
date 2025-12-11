@@ -27,3 +27,19 @@ export function attacksOnTile(board, tile) {
   });
   return attacks;
 }
+
+export function checkTurnAndSelectedPiece(board, targetElement) {
+  return (
+    targetElement.getAttribute("piece-color") !== board.currentTurn &&
+    !board.selectedPiece
+  );
+}
+
+export function hasMoves(selectedPiece, x, y) {
+  return (
+    selectedPiece &&
+    selectedPiece.moves.some((move) => {
+      return move.toTile.x === x && move.toTile.y === y;
+    })
+  );
+}

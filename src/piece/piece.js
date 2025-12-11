@@ -140,7 +140,10 @@ class Piece {
             ),
           );
         }
-        if (destination.getPiece().color !== this.color) {
+        if (
+          !destination.isEmpty() &&
+          destination.getPiece().color !== this.color
+        ) {
           this.moves.push(
             new AttackMove(
               this,
@@ -171,7 +174,10 @@ class Piece {
             ),
           );
         }
-        if (destination.getPiece().color !== this.color) {
+        if (
+          !destination.isEmpty() &&
+          destination.getPiece().color !== this.color
+        ) {
           this.moves.push(
             new AttackMove(
               this,
