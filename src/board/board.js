@@ -87,9 +87,7 @@ class Board {
           return move.toTile.x === x && move.toTile.y === y;
         })
       ) {
-        console.log(`this.selectedPiece: ${this.selectedPiece.imageSrc}`);
-        const oldX = this.selectedPiece.x;
-        const oldY = this.selectedPiece.y;
+        const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
         const newTileElement = document.getElementById(`tile_${x}_${y}`);
         newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
         newTileElement.setAttribute("piece-type", this.selectedPiece.type);
@@ -98,7 +96,7 @@ class Board {
           `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
         );
         oldTileElement.style.backgroundImage = "";
-        this.movePiece(oldX, oldY);
+        this.updateBoard(oldX, oldY, x, y);
       }
       document.querySelectorAll(".receiver-tile").forEach((tile) => {
         tile.classList.remove("receiver-tile");
@@ -108,60 +106,32 @@ class Board {
     }
   }
 
-  movePiece(oldX, oldY) {
-    // Find the piece to move
+  updateBoard(oldX, oldY, x, y) {
+    // find the corresponding move
     const move = this.moves.find((move) => {
-      return move.fromTile.x == oldX && move.fromTile.y == oldY;
+      return (
+        move.fromTile.x == oldX &&
+        move.fromTile.y == oldY &&
+        move.toTile.x == x &&
+        move.toTile.y == y
+      );
     });
-    let capturedPiece;
+    // let capturedPiece = null;
     switch (move.type) {
       case "normal":
         move.makeMove();
         break;
       case "attack":
-        capturedPiece = move.makeMove();
+        move.makeMove();
         break;
       case "en_passant":
-        capturedPiece = move.makeMove();
+        move.makeMove();
         break;
     }
-    // Update old tile: set to empty piece object
-    // let oldTile = this.getTile(oldX, oldY);
-    // oldTile.piece = {
-    //   x: oldX,
-    //   y: oldY,
-    //   id: `${oldX}_${oldY}`,
-    //   type: "none",
-    //   imageSrc: "",
-    //   color: "none",
-    // };
-    // // Update new tile: assign reference to moved piece
-    // let newTile = this.getTile(newX, newY);
-    // if (!newTile.isEmpty()) {
-    //   // Remove captured piece from pieces list
-    //   this.pieces = this.pieces.filter((p) => {
-    //     // TODO: remove en passant captured pawn
-    //     !(p.x === newX && p.y === newY);
-    //   });
+    // if (capturedPiece) {
+    //   this.capturedPieces.push(capturedPiece);
     // }
-    // // Update piece coordinates
-    // pieceToMove.x = newX;
-    // pieceToMove.y = newY;
-    // pieceToMove.id = `${newX}_${newY}`;
-    // if (pieceToMove.type === "pawn" && pieceToMove.isFirstMove) {
-    //   // Handle en passant setup
-    //   if (Math.abs(newX - oldX) === 2) {
-    //     this.enPassantPawn = pieceToMove;
-    //     console.log(`En Passant pawn at ${pieceToMove.x}, ${pieceToMove.y}`);
-    //   } else {
-    //     this.enPassantPawn = null;
-    //   }
-    // } else {
-    //   this.enPassantPawn = null;
-    // }
-    // pieceToMove.isFirstMove = false;
-    // newTile.piece = pieceToMove;
-    // Reset board state for next move
+    // reset board state for next move
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.receiverTiles = [];
     this.selectedPiece = null;

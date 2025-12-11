@@ -55,7 +55,12 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), destination),
+            new NormalMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              board,
+            ),
           );
         } else {
           if (destination.getPiece().color !== this.color) {
@@ -65,6 +70,7 @@ class Piece {
                 board.getTile(this.x, this.y),
                 destination,
                 destination.getPiece(),
+                board,
               ),
             );
           }
@@ -84,7 +90,12 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), destination),
+            new NormalMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              board,
+            ),
           );
         } else {
           if (destination.getPiece().color !== this.color) {
@@ -94,6 +105,7 @@ class Piece {
                 board.getTile(this.x, this.y),
                 destination,
                 destination.getPiece(),
+                board,
               ),
             );
           }
@@ -120,7 +132,12 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), destination),
+            new NormalMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              board,
+            ),
           );
         }
         if (destination.getPiece().color !== this.color) {
@@ -130,6 +147,7 @@ class Piece {
               board.getTile(this.x, this.y),
               destination,
               destination.getPiece(),
+              board,
             ),
           );
         }
@@ -145,7 +163,12 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), destination),
+            new NormalMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              board,
+            ),
           );
         }
         if (destination.getPiece().color !== this.color) {
@@ -155,6 +178,7 @@ class Piece {
               board.getTile(this.x, this.y),
               destination,
               destination.getPiece(),
+              board,
             ),
           );
         }
@@ -170,13 +194,18 @@ class Piece {
     const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.isEmpty()) {
       this.moves.push(
-        new NormalMove(this, board.getTile(this.x, this.y), destination),
+        new NormalMove(this, board.getTile(this.x, this.y), destination, board),
       );
       if (this.x === startRow) {
         const doubleStep = board.getTile(this.x + 2 * dir, this.y);
         if (doubleStep && doubleStep.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), doubleStep),
+            new NormalMove(
+              this,
+              board.getTile(this.x, this.y),
+              doubleStep,
+              board,
+            ),
           );
         }
       }
@@ -194,6 +223,7 @@ class Piece {
           board.getTile(this.x, this.y),
           captureLeft,
           captureLeft.getPiece(),
+          board,
         ),
       );
     }
@@ -208,6 +238,7 @@ class Piece {
           board.getTile(this.x, this.y),
           captureRight,
           captureRight.getPiece(),
+          board,
         ),
       );
     }
@@ -224,6 +255,7 @@ class Piece {
             board.getTile(this.x, this.y),
             board.getTile(this.x + dir, enPassantY),
             board.enPassantPawn,
+            board,
           ),
         );
       }
