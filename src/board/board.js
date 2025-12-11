@@ -7,12 +7,13 @@ import {
   hasMoves,
   checkTurnAndSelectedPiece,
 } from "../utils/boardutils.js";
-import { NormalMove, AttackMove, EnPassantMove } from "../move/move.js";
 import { BoardLogger } from "../utils/logger.js";
+
 // TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
 // and stored as FEN, can use this to set board state for undo/redo),
 // timers, undo/redo, load from FEN/PGN
 // TODO: Unit tests for board
+
 class Board {
   constructor() {
     this.tiles = [];
@@ -66,26 +67,22 @@ class Board {
       checkTurnAndSelectedPiece(this, targetElement)
     )
       return;
+    const [newX, newY] = [
+      parseInt(targetElement.getAttribute("data-x")),
+      parseInt(targetElement.getAttribute("data-y")),
+    ];
     if (!this.selectedPiece && !this.clickedTile) {
-      const [x, y] = [
-        parseInt(targetElement.getAttribute("data-x")),
-        parseInt(targetElement.getAttribute("data-y")),
-      ];
-      this.drawReceiverTiles(x, y);
+      this.drawAvailableTiles(newX, newY);
     } else {
-      const [x, y] = [
-        parseInt(targetElement.getAttribute("data-x")),
-        parseInt(targetElement.getAttribute("data-y")),
-      ];
-      if (hasMoves(this.selectedPiece, x, y)) {
+      if (hasMoves(this.selectedPiece, newX, newY)) {
         const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
-        this.updateDOM(x, y);
-        this.updateBoard(oldX, oldY, x, y);
+        this.updateDOM(newX, newY);
+        this.updateBoard(oldX, oldY, newX, newY);
       }
     }
   }
 
-  drawReceiverTiles(x, y) {
+  drawAvailableTiles(x, y) {
     this.clickedTile = this.getTile(x, y);
     this.selectedPiece = this.clickedTile.getPiece();
     const moves = this.selectedPiece.moves;
@@ -120,25 +117,22 @@ class Board {
         move.toTile.y == y
       );
     });
-    // let capturedPiece = null;
     switch (move.type) {
       case "normal":
         move.makeMove();
         break;
       case "attack":
+        this.capturedPieces.push(move.pieceCaptured);
         move.makeMove();
         break;
       case "en_passant":
         move.makeMove();
         break;
     }
-    // if (capturedPiece) {
-    //   this.capturedPieces.push(capturedPiece);
-    // }
-    this.resetBoard();
+    this.nextTurn();
   }
 
-  resetBoard() {
+  nextTurn() {
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.receiverTiles = [];
     this.selectedPiece = null;
