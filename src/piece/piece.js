@@ -7,7 +7,7 @@ import {
   KNIGHT_MOVES,
 } from "../board/constants.js";
 import { validCoordinate } from "../utils/boardutils.js";
-import { Move } from "../move/move.js";
+import { AttackMove, NormalMove, EnPassantMove } from "../move/move.js";
 
 class Piece {
   constructor(type, color, imageSrc = "", x, y) {

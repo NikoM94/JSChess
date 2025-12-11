@@ -12,7 +12,7 @@ class Move {
   }
 }
 
-class NormalMove extends Move {
+export class NormalMove extends Move {
   constructor(pieceMoved, fromTile, toTile) {
     super(pieceMoved, fromTile, toTile);
     this.type = "normal";
@@ -23,7 +23,7 @@ class NormalMove extends Move {
   }
 }
 
-class AttackMove extends Move {
+export class AttackMove extends Move {
   constructor(pieceMoved, fromTile, toTile, pieceCaptured) {
     super(pieceMoved, fromTile, toTile);
     this.pieceCaptured = pieceCaptured;
@@ -36,7 +36,7 @@ class AttackMove extends Move {
   }
 }
 
-class EnPassantMove extends Move {
+export class EnPassantMove extends Move {
   constructor(pieceMoved, fromTile, toTile, pieceCaptured) {
     super(pieceMoved, fromTile, toTile);
     this.pieceCaptured = pieceCaptured;
@@ -49,7 +49,7 @@ class EnPassantMove extends Move {
   }
 }
 
-class PromotionMove extends Move {
+export class PromotionMove extends Move {
   constructor(pieceMoved, fromTile, toTile, promoteTo) {
     super(pieceMoved, toTile, fromTile);
     this.promoteTo = promoteTo; //handle this dynamically later
@@ -57,7 +57,7 @@ class PromotionMove extends Move {
   }
 }
 
-class CastleMove extends Move {
+export class CastleMove extends Move {
   constructor(pieceMoved, fromTile, toTile, castleRookFrom, castleRookTo) {
     super(pieceMoved, toTile, fromTile);
     this.castleRookFrom = castleRookFrom;

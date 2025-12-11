@@ -36,6 +36,7 @@ class Board {
     const tile = this.getTile(x - 1, y - 1);
     return tile.piece;
   }
+
   calculateAllMoves() {
     let moves = [];
     this.pieces.forEach((piece) => {
@@ -53,43 +54,51 @@ class Board {
   }
 
   onClickTile(event) {
-    const target = event.target;
-    if (!target.classList.contains("tile")) return;
+    const targetElement = event.target;
+    if (!targetElement.classList.contains("tile")) return;
     // check turn
     if (
-      target.getAttribute("piece-color") !== this.currentTurn &&
+      targetElement.getAttribute("piece-color") !== this.currentTurn &&
       !this.selectedPiece
     ) {
       return;
     }
     if (!this.selectedPiece && !this.clickedTile) {
-      const x = parseInt(target.getAttribute("data-x"));
-      const y = parseInt(target.getAttribute("data-y"));
+      const [x, y] = [
+        parseInt(targetElement.getAttribute("data-x")),
+        parseInt(targetElement.getAttribute("data-y")),
+      ];
       this.clickedTile = this.getTile(x, y);
       this.selectedPiece = this.clickedTile.getPiece();
       const moves = this.selectedPiece.moves;
       moves.forEach((move) => {
-        const tileElement = document.getElementById(`tile_${move.x}_${move.y}`);
+        const tileElement = document.getElementById(
+          `tile_${move.fromTile.x}_${move.fromTile.y}`,
+        );
         tileElement.classList.add("receiver-tile");
       });
     } else {
-      const x = parseInt(target.getAttribute("data-x"));
-      const y = parseInt(target.getAttribute("data-y"));
+      const [x, y] = [
+        parseInt(targetElement.getAttribute("data-x")),
+        parseInt(targetElement.getAttribute("data-y")),
+      ];
       if (
         this.selectedPiece &&
-        this.selectedPiece.moves.some((move) => move.x === x && move.y === y)
+        this.selectedPiece.moves.some((move) => {
+          return move.toTile.x === x && move.toTile.y === y;
+        })
       ) {
         console.log(`this.selectedPiece: ${this.selectedPiece.imageSrc}`);
         const oldX = this.selectedPiece.x;
         const oldY = this.selectedPiece.y;
-        const newTile = document.getElementById(`tile_${x}_${y}`);
-        newTile.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
-        newTile.setAttribute("piece-type", this.selectedPiece.type);
-        newTile.setAttribute("piece-color", this.selectedPiece.color);
-        const oldTile = document.getElementById(
+        const newTileElement = document.getElementById(`tile_${x}_${y}`);
+        newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
+        newTileElement.setAttribute("piece-type", this.selectedPiece.type);
+        newTileElement.setAttribute("piece-color", this.selectedPiece.color);
+        const oldTileElement = document.getElementById(
           `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
         );
-        oldTile.style.backgroundImage = "";
+        oldTileElement.style.backgroundImage = "";
         this.movePiece(x, y, oldX, oldY);
       }
       document.querySelectorAll(".receiver-tile").forEach((tile) => {
@@ -98,6 +107,57 @@ class Board {
       this.selectedPiece = null;
       this.clickedTile = null;
     }
+  }
+
+  movePiece(newX, newY, oldX, oldY) {
+    // Find the piece to move
+    let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
+    // TODO: use new Move class to handle move logic
+
+    // Update old tile: set to empty piece object
+    // let oldTile = this.getTile(oldX, oldY);
+    // oldTile.piece = {
+    //   x: oldX,
+    //   y: oldY,
+    //   id: `${oldX}_${oldY}`,
+    //   type: "none",
+    //   imageSrc: "",
+    //   color: "none",
+    // };
+    // // Update new tile: assign reference to moved piece
+    // let newTile = this.getTile(newX, newY);
+    // if (!newTile.isEmpty()) {
+    //   // Remove captured piece from pieces list
+    //   this.pieces = this.pieces.filter((p) => {
+    //     // TODO: remove en passant captured pawn
+    //     !(p.x === newX && p.y === newY);
+    //   });
+    // }
+    // // Update piece coordinates
+    // pieceToMove.x = newX;
+    // pieceToMove.y = newY;
+    // pieceToMove.id = `${newX}_${newY}`;
+    // if (pieceToMove.type === "pawn" && pieceToMove.isFirstMove) {
+    //   // Handle en passant setup
+    //   if (Math.abs(newX - oldX) === 2) {
+    //     this.enPassantPawn = pieceToMove;
+    //     console.log(`En Passant pawn at ${pieceToMove.x}, ${pieceToMove.y}`);
+    //   } else {
+    //     this.enPassantPawn = null;
+    //   }
+    // } else {
+    //   this.enPassantPawn = null;
+    // }
+    // pieceToMove.isFirstMove = false;
+    // newTile.piece = pieceToMove;
+    // Reset board state for next move
+    this.currentTurn = this.currentTurn === "white" ? "black" : "white";
+    this.selectedMoves = [];
+    this.selectedPiece.moves = [];
+    this.receiverTiles = [];
+    this.selectedPiece = null;
+    this.turn = COLORS.white ? COLORS.black : COLORS.white;
+    this.moves = this.calculateAllMoves();
   }
 
   createBoard() {
@@ -135,55 +195,6 @@ class Board {
       }
     }
     this.addListeners();
-  }
-
-  movePiece(newX, newY, oldX, oldY) {
-    // Find the piece to move
-    let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
-    // Update old tile: set to empty piece object
-    let oldTile = this.getTile(oldX, oldY);
-    oldTile.piece = {
-      x: oldX,
-      y: oldY,
-      id: `${oldX}_${oldY}`,
-      type: "none",
-      imageSrc: "",
-      color: "none",
-    };
-    // Update new tile: assign reference to moved piece
-    let newTile = this.getTile(newX, newY);
-    if (!newTile.isEmpty()) {
-      // Remove captured piece from pieces list
-      this.pieces = this.pieces.filter((p) => {
-        // TODO: remove en passant captured pawn
-        !(p.x === newX && p.y === newY);
-      });
-    }
-    // Update piece coordinates
-    pieceToMove.x = newX;
-    pieceToMove.y = newY;
-    pieceToMove.id = `${newX}_${newY}`;
-    if (pieceToMove.type === "pawn" && pieceToMove.isFirstMove) {
-      // Handle en passant setup
-      if (Math.abs(newX - oldX) === 2) {
-        this.enPassantPawn = pieceToMove;
-        console.log(`En Passant pawn at ${pieceToMove.x}, ${pieceToMove.y}`);
-      } else {
-        this.enPassantPawn = null;
-      }
-    } else {
-      this.enPassantPawn = null;
-    }
-    pieceToMove.isFirstMove = false;
-    newTile.piece = pieceToMove;
-    // Reset board state for next move
-    this.currentTurn = this.currentTurn === "white" ? "black" : "white";
-    this.selectedMoves = [];
-    this.selectedPiece.moves = [];
-    this.receiverTiles = [];
-    this.selectedPiece = null;
-    this.turn = COLORS.white ? COLORS.black : COLORS.white;
-    this.moves = this.calculateAllMoves();
   }
 }
 
