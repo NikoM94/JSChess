@@ -146,13 +146,13 @@ class Board {
     };
     // Update new tile: assign reference to moved piece
     let newTile = this.getTile(newX, newY);
-    // if (!newTile.isEmpty()) {
-    //   // Remove captured piece from pieces list
-    //   this.pieces = this.pieces.filter((p) => {
-    //     // TODO: remove en passant captured pawn
-    //     !(p.x === newX && p.y === newY);
-    //   });
-    // }
+    if (!newTile.isEmpty()) {
+      // Remove captured piece from pieces list
+      this.pieces = this.pieces.filter((p) => {
+        // TODO: remove en passant captured pawn
+        !(p.x === newX && p.y === newY);
+      });
+    }
     // Update piece coordinates
     pieceToMove.x = newX;
     pieceToMove.y = newY;

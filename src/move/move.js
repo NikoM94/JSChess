@@ -4,11 +4,21 @@ class Move {
     this.fromTile = fromTile;
     this.toTile = toTile;
   }
+
+  makeMove() {
+    this.toTile.piece = this.pieceMoved;
+    this.fromTile.piece.type = "none";
+    this.pieceMoved.isFirstMove = false;
+  }
 }
 
 class NormalMove extends Move {
   constructor(pieceMoved, fromTile, toTile) {
     super(pieceMoved, fromTile, toTile);
+  }
+
+  makeMove() {
+    super.makeMove();
   }
 }
 
@@ -17,11 +27,24 @@ class AttackMove extends Move {
     super(pieceMoved, fromTile, toTile);
     this.pieceCaptured = pieceCaptured;
   }
+
+  makeMove() {
+    super.makeMove();
+    return this.pieceCaptured;
+  }
 }
 
 class PromotionMove extends Move {
   constructor(pieceMoved, fromTile, toTile, promoteTo) {
     super(pieceMoved, toTile, fromTile);
     this.promoteTo = promoteTo; //handle this dynamically later
+  }
+}
+
+class CastleMove extends Move {
+  constructor(pieceMoved, fromTile, toTile, castleRookFrom, castleRookTo) {
+    super(pieceMoved, toTile, fromTile);
+    this.castleRookFrom = castleRookFrom;
+    this.castleRookTo = castleRookTo;
   }
 }
