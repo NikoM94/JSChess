@@ -15,6 +15,7 @@ class Move {
 class NormalMove extends Move {
   constructor(pieceMoved, fromTile, toTile) {
     super(pieceMoved, fromTile, toTile);
+    this.type = "normal";
   }
 
   makeMove() {
@@ -26,6 +27,20 @@ class AttackMove extends Move {
   constructor(pieceMoved, fromTile, toTile, pieceCaptured) {
     super(pieceMoved, fromTile, toTile);
     this.pieceCaptured = pieceCaptured;
+    this.type = "attack";
+  }
+
+  makeMove() {
+    super.makeMove();
+    return this.pieceCaptured;
+  }
+}
+
+class EnPassantMove extends Move {
+  constructor(pieceMoved, fromTile, toTile, pieceCaptured) {
+    super(pieceMoved, fromTile, toTile);
+    this.pieceCaptured = pieceCaptured;
+    this.type = "en_passant";
   }
 
   makeMove() {
@@ -38,6 +53,7 @@ class PromotionMove extends Move {
   constructor(pieceMoved, fromTile, toTile, promoteTo) {
     super(pieceMoved, toTile, fromTile);
     this.promoteTo = promoteTo; //handle this dynamically later
+    this.type = "promotion";
   }
 }
 
@@ -46,5 +62,6 @@ class CastleMove extends Move {
     super(pieceMoved, toTile, fromTile);
     this.castleRookFrom = castleRookFrom;
     this.castleRookTo = castleRookTo;
+    this.type = "castle";
   }
 }

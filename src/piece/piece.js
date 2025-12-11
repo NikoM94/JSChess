@@ -7,6 +7,8 @@ import {
   KNIGHT_MOVES,
 } from "../board/constants.js";
 import { validCoordinate } from "../utils/boardutils.js";
+import { Move } from "../move/move.js";
+
 class Piece {
   constructor(type, color, imageSrc = "", x, y) {
     this.type = PIECES[type];
@@ -52,10 +54,19 @@ class Piece {
       while (validCoordinate(nx, ny)) {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
-          this.moves.push({ x: nx, y: ny });
+          this.moves.push(
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
+          );
         } else {
           if (destination.getPiece().color !== this.color) {
-            this.moves.push({ x: nx, y: ny });
+            this.moves.push(
+              new AttackMove(
+                this,
+                board.getTile(this.x, this.y),
+                destination,
+                destination.getPiece(),
+              ),
+            );
           }
           break;
         }
@@ -72,10 +83,19 @@ class Piece {
       while (validCoordinate(nx, ny)) {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
-          this.moves.push({ x: nx, y: ny });
+          this.moves.push(
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
+          );
         } else {
           if (destination.getPiece().color !== this.color) {
-            this.moves.push({ x: nx, y: ny });
+            this.moves.push(
+              new AttackMove(
+                this,
+                board.getTile(this.x, this.y),
+                destination,
+                destination.getPiece(),
+              ),
+            );
           }
           break;
         }
@@ -86,6 +106,7 @@ class Piece {
   }
 
   calculateQueenMoves(board) {
+    // queen moves are just bishop + rook moves
     this.calculateRookMoves(board);
     this.calculateBishopMoves(board);
   }
@@ -97,11 +118,20 @@ class Piece {
       const ny = this.y + move.y;
       if (validCoordinate(nx, ny)) {
         const destination = board.getTile(nx, ny);
-        if (
-          destination.isEmpty() ||
-          destination.getPiece().color !== this.color
-        ) {
-          this.moves.push({ x: nx, y: ny });
+        if (destination.isEmpty()) {
+          this.moves.push(
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
+          );
+        }
+        if (destination.getPiece().color !== this.color) {
+          this.moves.push(
+            new AttackMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              destination.getPiece(),
+            ),
+          );
         }
       }
     }
@@ -113,11 +143,20 @@ class Piece {
       const ny = this.y + move.y;
       if (validCoordinate(nx, ny)) {
         const destination = board.getTile(nx, ny);
-        if (
-          destination.isEmpty() ||
-          destination.getPiece().color !== this.color
-        ) {
-          this.moves.push({ x: nx, y: ny });
+        if (destination.isEmpty()) {
+          this.moves.push(
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
+          );
+        }
+        if (destination.getPiece().color !== this.color) {
+          this.moves.push(
+            new AttackMove(
+              this,
+              board.getTile(this.x, this.y),
+              destination,
+              destination.getPiece(),
+            ),
+          );
         }
       }
     }
@@ -130,11 +169,15 @@ class Piece {
     const destination = board.getTile(this.x + dir, this.y);
     const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.isEmpty()) {
-      this.moves.push({ x: this.x + dir, y: this.y });
+      this.moves.push(
+        new NormalMove(this, board.getTile(this.x, this.y), destination),
+      );
       if (this.x === startRow) {
         const doubleStep = board.getTile(this.x + 2 * dir, this.y);
         if (doubleStep && doubleStep.isEmpty()) {
-          this.moves.push({ x: this.x + 2 * dir, y: this.y });
+          this.moves.push(
+            new NormalMove(this, board.getTile(this.x, this.y), doubleStep),
+          );
         }
       }
     }
@@ -145,14 +188,28 @@ class Piece {
       !captureLeft.isEmpty() &&
       captureLeft.getPiece().color !== this.color
     ) {
-      this.moves.push({ x: this.x + dir, y: this.y - 1 });
+      this.moves.push(
+        new AttackMove(
+          this,
+          board.getTile(this.x, this.y),
+          captureLeft,
+          captureLeft.getPiece(),
+        ),
+      );
     }
     if (
       captureRight &&
       !captureRight.isEmpty() &&
       captureRight.getPiece().color !== this.color
     ) {
-      this.moves.push({ x: this.x + dir, y: this.y + 1 });
+      this.moves.push(
+        new AttackMove(
+          this,
+          board.getTile(this.x, this.y),
+          captureRight,
+          captureRight.getPiece(),
+        ),
+      );
     }
     if (board.enPassantPawn) {
       const enPassantX = board.enPassantPawn.x;
@@ -161,7 +218,14 @@ class Piece {
         enPassantX === this.x &&
         (enPassantY === this.y - 1 || enPassantY === this.y + 1)
       ) {
-        this.moves.push({ x: this.x + dir, y: enPassantY });
+        this.moves.push(
+          new EnPassantMove(
+            this,
+            board.getTile(this.x, this.y),
+            board.getTile(this.x + dir, enPassantY),
+            board.enPassantPawn,
+          ),
+        );
       }
     }
   }

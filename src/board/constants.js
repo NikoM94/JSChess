@@ -5,6 +5,7 @@ export const COLORS = {
   white: "white",
   black: "black",
 };
+
 export const PIECES = {
   none: "none",
   pawn: "pawn",

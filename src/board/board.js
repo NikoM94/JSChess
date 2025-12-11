@@ -2,6 +2,7 @@ import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
+import { validCoordinate } from "../utils/boardutils.js";
 // TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
 // and stored as FEN, can use this to set board state for undo/redo),
 // timers, undo/redo, load from FEN/PGN
@@ -23,7 +24,12 @@ class Board {
   }
 
   getTile(x, y) {
-    return this.tiles[x][y];
+    if (validCoordinate(x, y)) {
+      return this.tiles[x][y];
+    } else {
+      console.log(`Invalid coordinates: (${x}, ${y})`);
+      return null;
+    }
   }
 
   getPiece(x, y) {
