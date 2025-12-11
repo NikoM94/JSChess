@@ -2,8 +2,13 @@ import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
-import { validCoordinate } from "../utils/boardutils.js";
+import {
+  validCoordinate,
+  hasMoves,
+  checkTurnAndSelectedPiece,
+} from "../utils/boardutils.js";
 import { NormalMove, AttackMove, EnPassantMove } from "../move/move.js";
+import { BoardLogger } from "../utils/logger.js";
 // TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
 // and stored as FEN, can use this to set board state for undo/redo),
 // timers, undo/redo, load from FEN/PGN
@@ -23,6 +28,8 @@ class Board {
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
     this.capturedPieces = [];
+    this.logger = new BoardLogger(this);
+    this.logger.printBoard();
   }
 
   getTile(x, y) {
@@ -54,60 +61,57 @@ class Board {
 
   onClickTile(event) {
     const targetElement = event.target;
-    if (!targetElement.classList.contains("tile")) return;
-    // check turn
     if (
-      targetElement.getAttribute("piece-color") !== this.currentTurn &&
-      !this.selectedPiece
-    ) {
+      !targetElement.classList.contains("tile") ||
+      checkTurnAndSelectedPiece(this, targetElement)
+    )
       return;
-    }
     if (!this.selectedPiece && !this.clickedTile) {
       const [x, y] = [
         parseInt(targetElement.getAttribute("data-x")),
         parseInt(targetElement.getAttribute("data-y")),
       ];
-      this.clickedTile = this.getTile(x, y);
-      this.selectedPiece = this.clickedTile.getPiece();
-      const moves = this.selectedPiece.moves;
-      moves.forEach((move) => {
-        const tileElement = document.getElementById(
-          `tile_${move.toTile.x}_${move.toTile.y}`,
-        );
-        tileElement.classList.add("receiver-tile");
-      });
+      this.drawReceiverTiles(x, y);
     } else {
       const [x, y] = [
         parseInt(targetElement.getAttribute("data-x")),
         parseInt(targetElement.getAttribute("data-y")),
       ];
-      if (
-        this.selectedPiece &&
-        this.selectedPiece.moves.some((move) => {
-          return move.toTile.x === x && move.toTile.y === y;
-        })
-      ) {
+      if (hasMoves(this.selectedPiece, x, y)) {
         const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
-        const newTileElement = document.getElementById(`tile_${x}_${y}`);
-        newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
-        newTileElement.setAttribute("piece-type", this.selectedPiece.type);
-        newTileElement.setAttribute("piece-color", this.selectedPiece.color);
-        const oldTileElement = document.getElementById(
-          `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
-        );
-        oldTileElement.style.backgroundImage = "";
+        this.updateDOM(x, y);
         this.updateBoard(oldX, oldY, x, y);
       }
-      document.querySelectorAll(".receiver-tile").forEach((tile) => {
-        tile.classList.remove("receiver-tile");
-      });
-      this.selectedPiece = null;
-      this.clickedTile = null;
     }
   }
 
+  drawReceiverTiles(x, y) {
+    this.clickedTile = this.getTile(x, y);
+    this.selectedPiece = this.clickedTile.getPiece();
+    const moves = this.selectedPiece.moves;
+    moves.forEach((move) => {
+      const tileElement = document.getElementById(
+        `tile_${move.toTile.x}_${move.toTile.y}`,
+      );
+      tileElement.classList.add("receiver-tile");
+    });
+  }
+
+  updateDOM(x, y) {
+    const newTileElement = document.getElementById(`tile_${x}_${y}`);
+    newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
+    newTileElement.setAttribute("piece-type", this.selectedPiece.type);
+    newTileElement.setAttribute("piece-color", this.selectedPiece.color);
+    const oldTileElement = document.getElementById(
+      `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
+    );
+    oldTileElement.style.backgroundImage = "";
+    document.querySelectorAll(".receiver-tile").forEach((tile) => {
+      tile.classList.remove("receiver-tile");
+    });
+  }
+
   updateBoard(oldX, oldY, x, y) {
-    // find the corresponding move
     const move = this.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
@@ -131,12 +135,18 @@ class Board {
     // if (capturedPiece) {
     //   this.capturedPieces.push(capturedPiece);
     // }
-    // reset board state for next move
+    this.resetBoard();
+  }
+
+  resetBoard() {
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.turn = COLORS.white ? COLORS.black : COLORS.white;
     this.moves = this.calculateAllMoves();
+    this.selectedPiece = null;
+    this.clickedTile = null;
+    this.logger.printBoard();
   }
 
   createBoard() {
