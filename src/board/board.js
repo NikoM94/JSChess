@@ -34,16 +34,7 @@ class Board {
   }
 
   getTile(x, y) {
-    if (validCoordinate(x, y)) {
-      return this.tiles[x][y];
-    } else {
-      return null;
-    }
-  }
-
-  getPiece(x, y) {
-    const tile = this.getTile(x - 1, y - 1);
-    return tile.piece;
+    return validCoordinate(x, y) ? this.tiles[x][y] : null;
   }
 
   calculateAllMoves() {
@@ -117,6 +108,7 @@ class Board {
         move.toTile.y == y
       );
     });
+    // TODO: promotion, castling, fix en passant
     switch (move.type) {
       case "normal":
         move.makeMove();
@@ -126,6 +118,7 @@ class Board {
         move.makeMove();
         break;
       case "en_passant":
+        this.capturedPieces.push(move.pieceCaptured);
         move.makeMove();
         break;
     }
