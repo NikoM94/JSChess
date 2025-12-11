@@ -1,6 +1,8 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
+// TODO: check, checkmate, stalemate, draw, move history, timers, undo/redo, load from FEN/PGN
+// TODO: Unit tests for board
 class Board {
   constructor() {
     this.tiles = [];
@@ -141,7 +143,10 @@ class Board {
     let newTile = this.getTile(newX, newY);
     if (!newTile.isEmpty()) {
       // Remove captured piece from pieces list
-      this.pieces = this.pieces.filter((p) => !(p.x === newX && p.y === newY));
+      this.pieces = this.pieces.filter((p) => {
+        // TODO: remove en passant captured pawn
+        !(p.x === newX && p.y === newY);
+      });
     }
     // Update piece coordinates
     pieceToMove.x = newX;

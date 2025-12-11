@@ -91,6 +91,7 @@ class Piece {
   }
 
   calculateKingMoves(board) {
+    // TODO: castling
     for (const move of KING_MOVES) {
       const nx = this.x + move.x;
       const ny = this.y + move.y;
@@ -123,7 +124,7 @@ class Piece {
   }
 
   calculatePawnMoves(board) {
-    //TODO en passant, promotion
+    // TODO: promotion
     const dir = this.color === "white" ? -1 : 1;
     if (this.x + dir < 0 || this.x + dir > 7) return;
     const destination = board.getTile(this.x + dir, this.y);
@@ -152,6 +153,16 @@ class Piece {
       captureRight.getPiece().color !== this.color
     ) {
       this.moves.push({ x: this.x + dir, y: this.y + 1 });
+    }
+    if (board.enPassantPawn) {
+      const enPassantX = board.enPassantPawn.x;
+      const enPassantY = board.enPassantPawn.y;
+      if (
+        enPassantX === this.x &&
+        (enPassantY === this.y - 1 || enPassantY === this.y + 1)
+      ) {
+        this.moves.push({ x: this.x + dir, y: enPassantY });
+      }
     }
   }
 }

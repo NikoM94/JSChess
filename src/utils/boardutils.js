@@ -15,3 +15,15 @@ export function chessCoordinateToXY(coordinate) {
   const x = RANKS_WHITE.indexOf(rank);
   return { x, y };
 }
+
+export function attacksOnTile(board, tile) {
+  let attacks = 0;
+  board.pieces.forEach((p) => {
+    p.moves.forEach((move) => {
+      if (move.x === tile.x && move.y === tile.y) {
+        attacks++;
+      }
+    });
+  });
+  return attacks;
+}
