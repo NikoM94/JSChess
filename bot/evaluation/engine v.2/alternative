@@ -56,7 +56,7 @@ export function minimax(board, depth, alpha, beta, maximizingPlayer, aiColor) {
       board.undoMove();
 
       minEval = Math.min(minEval, eval);
-      beta = Math.min(beta, eval);
+      beta = Math.min(beta, eval);eval
       if (beta <= alpha) break;
     }
 
