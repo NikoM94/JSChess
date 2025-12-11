@@ -3,6 +3,7 @@ import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
 import { validCoordinate } from "../utils/boardutils.js";
+import { NormalMove, AttackMove, EnPassantMove } from "../move/move.js";
 // TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
 // and stored as FEN, can use this to set board state for undo/redo),
 // timers, undo/redo, load from FEN/PGN
@@ -21,13 +22,13 @@ class Board {
     this.turn = COLORS.white;
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
+    this.capturedPieces = [];
   }
 
   getTile(x, y) {
     if (validCoordinate(x, y)) {
       return this.tiles[x][y];
     } else {
-      console.log(`Invalid coordinates: (${x}, ${y})`);
       return null;
     }
   }
@@ -41,9 +42,7 @@ class Board {
     let moves = [];
     this.pieces.forEach((piece) => {
       piece.calculateMoves(this);
-      piece.moves.forEach((move) => {
-        moves.push({ piece: piece, move: move });
-      });
+      moves.push(...piece.moves);
     });
     return moves;
   }
@@ -73,7 +72,7 @@ class Board {
       const moves = this.selectedPiece.moves;
       moves.forEach((move) => {
         const tileElement = document.getElementById(
-          `tile_${move.fromTile.x}_${move.fromTile.y}`,
+          `tile_${move.toTile.x}_${move.toTile.y}`,
         );
         tileElement.classList.add("receiver-tile");
       });
@@ -99,7 +98,7 @@ class Board {
           `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
         );
         oldTileElement.style.backgroundImage = "";
-        this.movePiece(x, y, oldX, oldY);
+        this.movePiece(oldX, oldY);
       }
       document.querySelectorAll(".receiver-tile").forEach((tile) => {
         tile.classList.remove("receiver-tile");
@@ -109,11 +108,23 @@ class Board {
     }
   }
 
-  movePiece(newX, newY, oldX, oldY) {
+  movePiece(oldX, oldY) {
     // Find the piece to move
-    let pieceToMove = this.pieces.find((p) => p.x === oldX && p.y === oldY);
-    // TODO: use new Move class to handle move logic
-
+    const move = this.moves.find((move) => {
+      return move.fromTile.x == oldX && move.fromTile.y == oldY;
+    });
+    let capturedPiece;
+    switch (move.type) {
+      case "normal":
+        move.makeMove();
+        break;
+      case "attack":
+        capturedPiece = move.makeMove();
+        break;
+      case "en_passant":
+        capturedPiece = move.makeMove();
+        break;
+    }
     // Update old tile: set to empty piece object
     // let oldTile = this.getTile(oldX, oldY);
     // oldTile.piece = {
@@ -152,8 +163,6 @@ class Board {
     // newTile.piece = pieceToMove;
     // Reset board state for next move
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
-    this.selectedMoves = [];
-    this.selectedPiece.moves = [];
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.turn = COLORS.white ? COLORS.black : COLORS.white;

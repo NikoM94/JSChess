@@ -5,7 +5,6 @@ class Tile {
     this.color = color;
     this.piece = piece ? piece : null;
     this.id = `tile_${this.x}_${this.y}`;
-    this.canMoveHere = false;
     this.backgroundImage =
       this.piece.type !== "none" ? `url(${this.piece.imageSrc})` : "";
   }
