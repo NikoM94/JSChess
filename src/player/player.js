@@ -1,6 +1,6 @@
-import { attacksOnTile } from "../utils/boardutils";
+import { attacksOnTile } from "../utils/boardutils.js";
 
-class Player {
+export class Player {
   constructor(board, color) {
     this.color = color;
     this.pieces = this.findPieces(board);
@@ -9,6 +9,7 @@ class Player {
     });
     this.king = this.pieces.find((p) => p.type === "king");
     this.isInCheck = false;
+    this.isInCheckMate = false;
     this.canCastleKingSide = true;
     this.canCastleQueenSide = true;
   }
@@ -23,8 +24,16 @@ class Player {
     });
   }
 
+  updateInCheck(board) {
+    return calculateAttacksOnTile(board.getTile(this.king.x, this.king.y));
+  }
+
+  updateInCheckMate(board) {
+    //TODO: need to check if move would put king in check, need to implement undo move in board
+  }
+
   findPieces(board) {
-    this.pieces = board.pieces.filter((p) => p.color === this.color);
+    return board.pieces.filter((p) => p.color === this.color);
   }
 
   checkCanCastle() {

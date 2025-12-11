@@ -1,7 +1,10 @@
 import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
 import { Piece } from "../piece/piece.js";
-// TODO: check, checkmate, stalemate, draw, move history, timers, undo/redo, load from FEN/PGN
+import { Player } from "../player/player.js";
+// TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
+// and stored as FEN, can use this to set board state for undo/redo),
+// timers, undo/redo, load from FEN/PGN
 // TODO: Unit tests for board
 class Board {
   constructor() {
@@ -15,6 +18,8 @@ class Board {
     this.clickedTile = null;
     this.enPassantPawn = null;
     this.turn = COLORS.white;
+    this.whitePlayer = new Player(this, COLORS["white"]);
+    this.blackPlayer = new Player(this, COLORS["black"]);
   }
 
   getTile(x, y) {
@@ -141,13 +146,13 @@ class Board {
     };
     // Update new tile: assign reference to moved piece
     let newTile = this.getTile(newX, newY);
-    if (!newTile.isEmpty()) {
-      // Remove captured piece from pieces list
-      this.pieces = this.pieces.filter((p) => {
-        // TODO: remove en passant captured pawn
-        !(p.x === newX && p.y === newY);
-      });
-    }
+    // if (!newTile.isEmpty()) {
+    //   // Remove captured piece from pieces list
+    //   this.pieces = this.pieces.filter((p) => {
+    //     // TODO: remove en passant captured pawn
+    //     !(p.x === newX && p.y === newY);
+    //   });
+    // }
     // Update piece coordinates
     pieceToMove.x = newX;
     pieceToMove.y = newY;
