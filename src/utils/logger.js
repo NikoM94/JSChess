@@ -1,6 +1,6 @@
 export class BoardLogger {
-  constructor(board) {
-    this.loggable = board;
+  constructor(loggable) {
+    this.loggable = loggable;
   }
 
   printBoard() {
