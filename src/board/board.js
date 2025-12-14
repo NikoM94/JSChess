@@ -30,6 +30,8 @@ class Board {
     this.blackPlayer = new Player(this, COLORS["black"]);
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
+    this.previousStates = {};
+    this.turns = 0;
     this.logger.printBoard();
   }
 

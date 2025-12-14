@@ -6,6 +6,15 @@ export const COLORS = {
   black: "black",
 };
 
+export const FEN_TYPES = {
+  p: "pawn",
+  r: "rook",
+  k: "knight",
+  b: "bishop",
+  q: "queen",
+  k: "king",
+};
+
 export const PIECES = {
   none: "none",
   pawn: "pawn",

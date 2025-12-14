@@ -3,15 +3,40 @@ import { attacksOnTile } from "../utils/boardutils.js";
 export class Player {
   constructor(board, color) {
     this.color = color;
-    this.pieces = this.findPieces(board);
-    this.moves = this.pieces.forEach((piece) => {
-      piece.calculateMoves(board);
-    });
-    this.king = this.pieces.find((p) => p.type === "king");
+    this.pieces = this.updatePieces(board);
+    this.moves = updateMoves(board);
+    this.opponentMoves = this.updateOpponentMoves(board);
+    this.king = this.findPlayerKing();
     this.isInCheck = false;
     this.isInCheckMate = false;
     this.canCastleKingSide = true;
     this.canCastleQueenSide = true;
+  }
+
+  findPlayerKing() {
+    return this.pieces.find((p) => {
+      if (p.color === this.color && p.type === "king") {
+        return p;
+      }
+    });
+  }
+
+  updatePlayer(board) {
+    this.pieces = this.updatePieces(board);
+    this.updateMoves(board);
+    this.updateOpponentMoves(board);
+    this.isInCheck = this.updateInCheck(board);
+    this.isInCheckMate = this.updateInCheckMate(board);
+    this.updateCanCastle();
+  }
+
+  updateOpponentMoves(board) {
+    this.opponentMoves = [];
+    board.moves.forEach((move) => {
+      if (move.piece.color !== this.color) {
+        this.opponentMoves.push(move);
+      }
+    });
   }
 
   updateMoves(board) {
@@ -32,11 +57,11 @@ export class Player {
     //TODO: need to check if move would put king in check, need to implement undo move in board
   }
 
-  findPieces(board) {
+  updatePieces(board) {
     return board.pieces.filter((p) => p.color === this.color);
   }
 
-  checkCanCastle() {
+  updateCanCastle() {
     let canCastleKing = true;
     let canCastleQueen = true;
     const rookKingSide = this.pieces.find(

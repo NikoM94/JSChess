@@ -1,28 +1,34 @@
--> dragstart applied to all tiles with a piece not of type none(makeMove function)
--> dragstart event fired = get piece from pieces
--> get all move x's and y's from selected piece
--> get all tiles that correspond to move x's and y's
--> set canMoveHere=true for those tiles, set data-canMoveHere=true for corresponding element
--> apply .can-move-here style and drop for tiles that have dataset.canMoveHere=true
--> on dragend and drop remove styles and invoke makeMove()
+undoMove and redoMove are complicated to implement:
+must store game history, then be able to reload any
+stored stated from history
 
--> makeMove()
--> if destination tile has piece, put it in capturedPieces
--> set pieceToMove to destination tile
-->
+approaches:
+- clone board and store a reference to each board state
+	i dont like this, there should only be 1 instance of Board that is mutated, otherwise can get very confusing with references
+- keep past board states stored as FEN strings
+	keep track of move history in PGN format, object with
+	k,v turnNumber,movePair
 
 
-refactor x/y to be consistently row/col instead of having to guess which is which!!!!!!!!
+-implementations:
+	BoardState class to keep track of past board states
+	keeps Board class clean, BoardState is a member of Board
 
-move execution internal logic:
-	store reference to previous tile | this comes from DOM
-	remove previous tile						 | need to also remove from DOM
-	grab reference to target tile		 | this comes from DOM
-	remove target tile						   | need to also remove from DOM
-	create new piece with data from previoustile, with updated x and y, add to new tile
-	create new tile with target tile x and y and add the piece to it
-	create new tile with previous x and y with none-piece
+	BoardState:
+	- has reference to Board
+		methods:
+			updateState(move, currentTurn):
+				store current board state and store move as PGN
+			loadSpecifiedState(int turnNumber):
+				when user clicks a move on the UI, load the clicked state
+			previousState():
+				load previous state as long as there is one
+			nextState():
+				load next state as long as there is one
 
-	remove and add the elements to the DOM
-
+			has helper functions in boardutils.js
+			e.g. loadFromFEN(), createPGN() etc.
+			may have to refactor how Board is instantiated to load
+			initial board config from FEN, parsing PGN files
+			might be necessary for unit testing
 
