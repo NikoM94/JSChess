@@ -18,6 +18,17 @@ class Move {
     tileTo.setPiece(this.pieceMoved);
     tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
   }
+
+  unmakeMove() {
+    let tileFrom = this.board.getTile(this.fromTile.x, this.fromTile.y);
+    let tileTo = this.board.getTile(this.toTile.x, this.toTile.y);
+
+    this.pieceMoved.x = tileFrom.x;
+    this.pieceMoved.y = tileFrom.y;
+
+    tileFrom.setPiece(this.pieceMoved);
+    tileTo.setPiece(new Piece("none", "", "", tileTo.x, tileTo.y));
+  }
 }
 
 export class NormalMove extends Move {

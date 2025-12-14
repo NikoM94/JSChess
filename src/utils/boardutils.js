@@ -64,6 +64,7 @@ export function loadFromFEN(board, fen) {
         const x = rows.indexOf(row);
         const y = row.indexOf(char);
         board.pieces.push();
+        //todo
       } else if (!isNaN(char)) {
         const emptyCount = parseInt(char);
         const x = rows.indexOf(row);
@@ -77,6 +78,33 @@ export function loadFromFEN(board, fen) {
       }
     }
   }
+}
+
+function boardToFEN(board) {
+  let fen = "";
+  for (let x = 0; x < 8; x++) {
+    let emptyCount = 0;
+    for (let y = 0; y < 8; y++) {
+      const piece = board.tiles[x][y].piece;
+      if (piece.type === "none") {
+        emptyCount++;
+      } else {
+        if (emptyCount > 0) {
+          fen += emptyCount.toString();
+          emptyCount = 0;
+        }
+        const fenChar = getFENCharFromPiece(piece);
+        fen += fenChar;
+      }
+    }
+    if (emptyCount > 0) {
+      fen += emptyCount.toString();
+    }
+    if (x < 7) {
+      fen += "/";
+    }
+  }
+  return fen;
 }
 
 function validateChar(char) {
