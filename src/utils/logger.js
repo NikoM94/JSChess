@@ -3,8 +3,7 @@ export class BoardLogger {
     this.loggable = loggable;
   }
 
-  printBoard() {
-    const board = this.loggable;
+  printBoard(board) {
     for (let x = 0; x < 8; x++) {
       let row = "";
       for (let y = 0; y < 8; y++) {
@@ -23,9 +22,9 @@ export class BoardLogger {
       }
       console.log(row);
     }
-    console.log(this.loggable.currentTurn + "'s turn");
+    console.log(board.currentTurn + "'s turn");
     console.log("Moves available:");
-    this.loggable.moves.forEach((move) => {
+    board.moves.forEach((move) => {
       const from = move.fromTile;
       const to = move.toTile;
       console.log(
@@ -33,7 +32,7 @@ export class BoardLogger {
       );
     });
     console.log("Captured Pieces:");
-    this.loggable.capturedPieces.forEach((piece) => {
+    board.capturedPieces.forEach((piece) => {
       console.log(
         `${piece.color.charAt(0).toUpperCase() + piece.type.charAt(0).toUpperCase()}`,
       );

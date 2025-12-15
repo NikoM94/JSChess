@@ -18,7 +18,6 @@ class Board {
   constructor() {
     this.tiles = [];
     this.pieces = [];
-    this.currentTurn = "white";
     this.createBoard();
     this.drawBoard();
     this.selectedPiece = null;
@@ -28,10 +27,10 @@ class Board {
     this.moves = this.calculateAllMoves();
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
-    this.currentMoves = this.whitePlayer.moves;
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
-    this.logger.printBoard();
+    this.logger.printBoard(this);
+    this.turns = 0;
   }
 
   getTile(x, y) {
@@ -59,8 +58,7 @@ class Board {
   onClickTile(event) {
     const targetElement = event.target;
     if (
-      !targetElement.classList.contains("tile") ||
-      checkTurnAndSelectedPiece(this, targetElement)
+      !targetElement.classList.contains("tile")
     )
       return;
     const [newX, newY] = [
@@ -105,7 +103,7 @@ class Board {
   }
 
   updateBoard(oldX, oldY, x, y) {
-    const move = this.currentMoves.find((move) => {
+    const move = this.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
         move.fromTile.y == oldY &&
@@ -131,20 +129,15 @@ class Board {
   }
 
   nextTurn() {
-    this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.turn = COLORS.white ? COLORS.black : COLORS.white;
     this.moves = this.calculateAllMoves();
     this.whitePlayer.updatePlayer(this);
     this.blackPlayer.updatePlayer(this);
-    this.currentMoves =
-      this.currentTurn === "white"
-        ? this.whitePlayer.moves
-        : this.blackPlayer.moves;
     this.selectedPiece = null;
     this.clickedTile = null;
-    this.logger.printBoard();
+    this.logger.printBoard(this);
   }
 
   createBoard() {

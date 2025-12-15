@@ -16,14 +16,17 @@ export function chessCoordinateToXY(coordinate) {
   return { x, y };
 }
 
-export function attacksOnTile(board, tile) {
+export function attacksOnTile(board, tile, color) {
   let attacks = 0;
-  board.pieces.forEach((p) => {
-    p.moves.forEach((move) => {
-      if (move.x === tile.x && move.y === tile.y) {
-        attacks++;
-      }
-    });
+  board.moves.forEach((move) => {
+    if (
+      move.type === "attack" &&
+      move.toTile.x === tile.x &&
+      move.toTile.y === tile.y &&
+      move.pieceMoved.color !== color) {
+      console.log(`Tile (${tile.x}, ${tile.y}) is attacked by ${move.pieceMoved.color} ${move.pieceMoved.type}`);
+      attacks++;
+    }
   });
   return attacks;
 }
