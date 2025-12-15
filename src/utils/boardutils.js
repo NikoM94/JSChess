@@ -20,7 +20,7 @@ export function attacksOnTile(board, tile) {
   let attacks = 0;
   board.pieces.forEach((p) => {
     p.moves.forEach((move) => {
-      if (move.x === tile.x && move.y === tile.y) {
+      if (move.toTile.x === tile.x && move.toTile.y === tile.y) {
         attacks++;
       }
     });

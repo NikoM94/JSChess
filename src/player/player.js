@@ -4,9 +4,15 @@ export class Player {
   constructor(board, color) {
     this.board = board;
     this.color = color;
-    this.pieces = this.board.pieces.filter((piece) => piece.color === this.color);
-    this.king = this.board.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
-    this.moves = this.board.moves.filter(m => m.pieceMoved.color === this.color);
+    this.pieces = this.board.pieces.filter(
+      (piece) => piece.color === this.color,
+    );
+    this.king = this.board.pieces.find(
+      (piece) => piece.type === "king" && piece.color === this.color,
+    );
+    this.moves = this.board.moves.filter(
+      (m) => m.pieceMoved.color === this.color,
+    );
     this.isInCheck = false;
     this.isInCheckMate = false;
     this.canCastleKingSide = true;
@@ -22,15 +28,23 @@ export class Player {
   }
 
   updateMoves(board) {
-    let thisMoves = board.moves.filter(m => {
+    let thisMoves = board.moves.filter((m) => {
       return m.pieceMoved.color === this.color;
-    })
+    });
     // return thisMoves;
     return this.filterMoves(thisMoves, board);
   }
 
+  updateMoves() {
+    let thisMoves = [];
+    for (const move of this.board.moves) {
+      if (move.pieceMoved.color == this.color) thisMoves.push(move);
+    }
+    return this.filterMoves(thisMoves);
+    // return thisMoves;
+  }
+
   filterMoves(moveList, board) {
-    // BUG: unmakemove deleting pieces
     const legalMoves = [];
     const kingTile = board.getTile(this.king.x, this.king.y);
     for (const move of moveList) {
@@ -40,15 +54,12 @@ export class Player {
         legalMoves.push(move);
       }
       move.unmakeMove(board);
+      return legalMoves;
     }
-    return legalMoves;
   }
 
   updateInCheck(board) {
-    return (
-      attacksOnTile(board, board.getTile(this.king.x, this.king.y)) !=
-      0
-    );
+    return attacksOnTile(board, board.getTile(this.king.x, this.king.y)) != 0;
   }
   updateInCheckMate() {
     return this.isInCheck && this.moves.length === 0;
