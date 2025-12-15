@@ -44,30 +44,24 @@ export class Player {
         allMoves.push(move);
       });
     });
-    this.moves = allMoves;
+    this.moves = this.filterMoves(allMoves);
   }
 
-  // filterMoves(moveList) {
-  //   const legalMoves = [];
-  //   this.this.board.tiles.forEach((row) => {
-  //     row.forEach((tile) => {
-  //       console.log(tile.x, tile.y);
-  //     });
-  //   });
-  //   moveList.forEach((move) => {
-  //     if (move.toTile.x === this.king.x && move.toTile.y === this.king.y) {
-  //       return;
-  //     }
-  //     move.makeMove();
-  //     console.log(this.king.x, this.king.y);
-  //     const kingTile = this.this.board.getTile(0, 0);
-  //     if (attacksOnTile(this.this.board, kingTile) === 0) {
-  //       legalMoves.push(move);
-  //     }
-  //     move.unmakeMove();
-  //   });
-  //   return legalMoves;
-  // }
+  filterMoves(moveList) {
+    const legalMoves = [];
+    moveList.forEach((move) => {
+      if (move.toTile.x !== this.king.x && move.toTile.y !== this.king.y) {
+        return;
+      }
+      move.makeMove();
+      const kingTile = this.board.getTile(this.king.x, this.king.y);
+      if (attacksOnTile(this.board, kingTile) === 0) {
+        legalMoves.push(move);
+      }
+      move.unmakeMove();
+    });
+    return legalMoves;
+  }
 
   updateInCheck() {
     return calculateAttacksOnTile(this.board.getTile(this.king.x, this.king.y));
