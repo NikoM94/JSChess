@@ -7,7 +7,6 @@ export class Player {
     this.pieces = this.updatePieces();
     this.king = this.findPlayerKing();
     this.moves = this.updateMoves();
-    // this.opponentMoves = this.updateOpponentMoves();
     this.isInCheck = false;
     this.isInCheckMate = false;
     this.canCastleKingSide = true;
@@ -15,16 +14,17 @@ export class Player {
   }
 
   findPlayerKing() {
-    return this.pieces.find((p) => {
-      if (p.color === this.color && p.type === "king") {
-        return p;
+    for (const piece of this.pieces) {
+      if (piece.type == "king") {
+        return piece;
       }
-    });
+    }
+    return null;
   }
 
   updatePlayer() {
     this.pieces = this.updatePieces();
-    this.updateMoves();
+    this.moves = this.updateMoves();
     // this.updateOpponentMoves();
     this.isInCheck = this.updateInCheck();
     this.isInCheckMate = this.updateInCheckMate();
@@ -36,43 +36,48 @@ export class Player {
   // }
 
   updateMoves() {
-    const allMoves = [];
-    this.pieces.forEach((piece) => {
-      if (piece.type === "none" || piece.color !== this.color) return;
-      piece.calculateMoves(this.board);
-      piece.moves.forEach((move) => {
-        allMoves.push(move);
-      });
-    });
-    this.moves = this.filterMoves(allMoves);
+    let thisMoves = [];
+    for (const move of this.board.moves) {
+      if (move.pieceMoved.color == this.color) thisMoves.push(move);
+    }
+    console.log(thisMoves);
+    // return this.filterMoves(thisMoves);
+    return thisMoves;
   }
 
   filterMoves(moveList) {
+    // bugged piece of shit
     const legalMoves = [];
-    moveList.forEach((move) => {
-      if (move.toTile.x !== this.king.x && move.toTile.y !== this.king.y) {
-        return;
-      }
+    const kingTile = this.board.getTile(this.king.x, this.king.y);
+    for (const move of moveList) {
       move.makeMove();
-      const kingTile = this.board.getTile(this.king.x, this.king.y);
-      if (attacksOnTile(this.board, kingTile) === 0) {
+      const noAttacksOnKing = attacksOnTile(this.board, kingTile) == 0;
+      if (noAttacksOnKing) {
         legalMoves.push(move);
       }
       move.unmakeMove();
-    });
+    }
     return legalMoves;
   }
 
   updateInCheck() {
-    return calculateAttacksOnTile(this.board.getTile(this.king.x, this.king.y));
+    return (
+      attacksOnTile(this.board, this.board.getTile(this.king.x, this.king.y)) !=
+      0
+    );
   }
-
   updateInCheckMate() {
     return this.isInCheck && this.moves.length === 0;
   }
 
   updatePieces() {
-    return this.board.pieces.filter((p) => p.color === this.color);
+    let thisPieces = [];
+    for (const piece of this.board.pieces) {
+      if (piece.color == this.color) {
+        thisPieces.push(piece);
+      }
+    }
+    return thisPieces;
   }
 
   updateCanCastle() {
