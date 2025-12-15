@@ -116,15 +116,15 @@ class Board {
     // TODO: promotion, castling, fix en passant
     switch (move.type) {
       case "normal":
-        move.makeMove();
+        move.makeMove(this);
         break;
       case "attack":
         this.capturedPieces.push(move.pieceCaptured);
-        move.makeMove();
+        move.makeMove(this);
         break;
       case "en_passant":
         this.capturedPieces.push(move.pieceCaptured);
-        move.makeMove();
+        move.makeMove(this);
         break;
     }
     this.nextTurn();
@@ -136,8 +136,8 @@ class Board {
     this.selectedPiece = null;
     this.turn = COLORS.white ? COLORS.black : COLORS.white;
     this.moves = this.calculateAllMoves();
-    this.whitePlayer.updatePlayer();
-    this.blackPlayer.updatePlayer();
+    this.whitePlayer.updatePlayer(this);
+    this.blackPlayer.updatePlayer(this);
     this.currentMoves =
       this.currentTurn === "white"
         ? this.whitePlayer.moves
