@@ -30,14 +30,16 @@ class Board {
     this.blackPlayer = new Player(this, COLORS["black"]);
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
-    this.previousStates = {};
-    this.turns = 0;
     this.logger.printBoard();
   }
 
   getTile(x, y) {
     return validCoordinate(x, y) ? this.tiles[x][y] : null;
   }
+
+  // getOpponent() {
+  //   return this.currentTurn === "white" ? this.blackPlayer : this.whitePlayer;
+  // }
 
   calculateAllMoves() {
     let moves = [];
