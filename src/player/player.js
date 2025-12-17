@@ -31,23 +31,27 @@ export class Player {
     let thisMoves = board.moves.filter((m) => {
       return m.pieceMoved.color === this.color;
     });
-    return thisMoves;
-    // return this.filterMoves(thisMoves, board);
+    // return thisMoves;
+    return this.filterMoves(thisMoves, board);
   }
 
   filterMoves(moveList, board) {
     const legalMoves = [];
+    let boardCopy = structuredClone(board);
+    console.log(boardCopy);
     const kingTile = board.tiles[this.king.y][this.king.x];
     for (const move of moveList) {
-      if (move.pieceCaptured.type === "king") continue;
-      move.makeMove(board);
-      const noAttacksOnKing = attacksOnTile(board, kingTile) == 0;
+      if (move.type === "attack " && move.pieceCaptured.type === "king") {
+        continue;
+      }
+      move.makeMove(boardCopy);
+      boardCopy.updateBoard();
+      const noAttacksOnKing = attacksOnTile(boardCopy, kingTile) == 0;
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
-      move.unmakeMove(board);
-      return legalMoves;
     }
+    return legalMoves;
   }
 
   updateInCheck(board) {

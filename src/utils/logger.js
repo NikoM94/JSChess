@@ -38,6 +38,14 @@ export class BoardLogger {
         `${piece.color.charAt(0).toUpperCase() + piece.type.charAt(0).toUpperCase()}`,
       );
     });
+    console.log("Moves for current player:");
+    this.loggable.currentPlayer.moves.forEach((move) => {
+      const from = move.fromTile;
+      const to = move.toTile;
+      console.log(
+        `${move.type.toUpperCase()} by piece: ${move.fromTile.piece.color} ${move.fromTile.piece.type}: (${from.x},${from.y}) -> (${to.x},${to.y})`,
+      );
+    });
     console.log("---------------------");
   }
 }

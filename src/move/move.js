@@ -8,14 +8,14 @@ class Move {
   }
 
   makeMove(board) {
-    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
-    let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+    let tileFrom = board.tiles[this.fromTile.x][this.fromTile.y];
+    let tileTo = board.tiles[this.toTile.x][this.toTile.y];
 
     this.pieceMoved.isFirstMove = false;
     this.pieceMoved.x = tileTo.x;
     this.pieceMoved.y = tileTo.y;
 
-    tileTo.setPiece(this.pieceMoved);
+    tileTo.piece = this.pieceMoved;
   }
 
   unmakeMove(board) {
@@ -40,8 +40,8 @@ export class NormalMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
-    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
+    let tileFrom = board.tiles[this.fromTile.x][this.fromTile.y];
+    tileFrom = new Piece("none", "", "", tileFrom.x, tileFrom.y);
   }
 }
 

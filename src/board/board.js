@@ -27,6 +27,8 @@ class Board {
     this.moves = this.calculateAllMoves();
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
+    this.currentTurn = "white";
+    this.currentPlayer = this.whitePlayer;
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
     this.logger.printBoard();
@@ -99,7 +101,9 @@ class Board {
   }
 
   updateBoard(oldX, oldY, x, y) {
-    const move = this.moves.find((move) => {
+    console.log(`Moving piece from (${oldX}, ${oldY}) to (${x}, ${y})`);
+    console.log(this.currentPlayer.moves);
+    const move = this.currentPlayer.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
         move.fromTile.y == oldY &&
@@ -130,6 +134,11 @@ class Board {
     this.moves = this.calculateAllMoves();
     this.whitePlayer.updatePlayer(this);
     this.blackPlayer.updatePlayer(this);
+    this.currentTurn = this.currentTurn === "white" ? "black" : "white";
+    this.currentPlayer =
+      this.currentPlayer === this.whitePlayer
+        ? this.blackPlayer
+        : this.whitePlayer;
     this.selectedPiece = null;
     this.clickedTile = null;
     this.logger.printBoard();
