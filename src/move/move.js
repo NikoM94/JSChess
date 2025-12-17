@@ -16,7 +16,6 @@ class Move {
     this.pieceMoved.y = tileTo.y;
 
     tileTo.setPiece(this.pieceMoved);
-    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
   }
 
   unmakeMove(board) {
@@ -26,8 +25,10 @@ class Move {
     this.pieceMoved.x = tileFrom.x;
     this.pieceMoved.y = tileFrom.y;
 
-    tileTo.setPiece(new Piece("none", "", "", tileTo.x, tileTo.y));
     tileFrom.setPiece(this.pieceMoved);
+    if (this.type !== "attack") {
+      tileTo.setPiece(new Piece("none", "", "", tileTo.x, tileTo.y));
+    }
   }
 }
 
@@ -39,6 +40,8 @@ export class NormalMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
+    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
+    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
   }
 }
 
@@ -54,23 +57,24 @@ export class AttackMove extends Move {
     board.pieces = this.board.pieces.filter(
       (piece) => piece !== this.pieceCaptured,
     );
+    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
+    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
   }
 
-<<<<<<< HEAD
   unmakeMove(board) {
-    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
+    super.unmakeMove(board);
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
-
-    this.pieceMoved.x = tileFrom.x;
-    this.pieceMoved.y = tileFrom.y;
-
-    tileTo.setPiece(this.pieceCaptured);
-    tileFrom.setPiece(this.pieceMoved);
-=======
-  unmakeMove() {
-    super.unmakeMove();
-    this.board.pieces.push(this.pieceCaptured);
->>>>>>> 8111587 (fix unmakemove for attack moves)
+    this.pieceCaptured.x = this.toTile.x;
+    this.pieceCaptured.y = this.toTile.y;
+    const newPiece = new Piece(
+      this.pieceCaptured.type,
+      this.pieceCaptured.color,
+      this.pieceCaptured.symbol,
+      this.pieceCaptured.x,
+      this.pieceCaptured.y,
+    );
+    board.pieces.push(newPiece);
+    tileTo.setPiece(newPiece);
   }
 }
 
