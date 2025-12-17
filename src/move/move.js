@@ -56,6 +56,7 @@ export class AttackMove extends Move {
     );
   }
 
+<<<<<<< HEAD
   unmakeMove(board) {
     let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
@@ -65,6 +66,11 @@ export class AttackMove extends Move {
 
     tileTo.setPiece(this.pieceCaptured);
     tileFrom.setPiece(this.pieceMoved);
+=======
+  unmakeMove() {
+    super.unmakeMove();
+    this.board.pieces.push(this.pieceCaptured);
+>>>>>>> 8111587 (fix unmakemove for attack moves)
   }
 }
 
