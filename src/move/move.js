@@ -32,7 +32,7 @@ class Move {
     this.pieceMoved.isFirstMove = this.wasFirstMove;
 
     tileFrom.setPiece(this.pieceMoved);
-    if (this.type !== "attack" || this.type !== "enPassant") {
+    if (this.type !== "attack" && this.type !== "enPassant") {
       tileTo.setPiece(new Piece("none", "none", "", tileTo.x, tileTo.y));
     }
   }
