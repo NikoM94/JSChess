@@ -9,9 +9,8 @@ import {
 } from "../utils/boardutils.js";
 import { BoardLogger } from "../utils/logger.js";
 
-// TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
-// and stored as FEN, can use this to set board state for undo/redo),
-// timers, undo/redo, load from FEN/PGN
+// TODO: checkmate, stalemate, draw, move history,
+// timers, undo/redo move, load from FEN/PGN
 // Unit tests for board
 
 export class Board {
