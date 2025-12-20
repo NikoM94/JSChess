@@ -105,8 +105,13 @@ export class EnPassantMove extends Move {
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceCaptured);
 
     // Clear the tile where the captured pawn was (different from toTile in en passant)
-    let capturedPawnTile = board.getTile(this.capturedPawnX, this.capturedPawnY);
-    capturedPawnTile.setPiece(new Piece("none", "none", "", this.capturedPawnX, this.capturedPawnY));
+    let capturedPawnTile = board.getTile(
+      this.capturedPawnX,
+      this.capturedPawnY,
+    );
+    capturedPawnTile.setPiece(
+      new Piece("none", "none", "", this.capturedPawnX, this.capturedPawnY),
+    );
   }
 
   unmakeMove(board) {

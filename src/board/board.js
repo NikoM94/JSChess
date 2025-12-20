@@ -128,6 +128,12 @@ export class Board {
         move.makeMove(this);
         break;
       case "enPassant":
+        const pieceCapturedElement = document.getElementById(
+          `tile_${move.pieceCaptured.x}_${move.pieceCaptured.y}`,
+        );
+        pieceCapturedElement.style.backgroundImage = "";
+        pieceCapturedElement.dataset.pieceType = "none";
+        pieceCapturedElement.dataset.pieceColor = "none";
         this.capturedPieces.push(move.pieceCaptured);
         move.makeMove(this);
         break;
