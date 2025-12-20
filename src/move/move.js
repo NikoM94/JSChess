@@ -10,17 +10,15 @@ class Move {
     let tileFrom = board.tiles[this.fromTile.x][this.fromTile.y];
     let tileTo = board.tiles[this.toTile.x][this.toTile.y];
 
+    // Store the original isFirstMove state to restore later
+    this.wasFirstMove = this.pieceMoved.isFirstMove;
     this.pieceMoved.isFirstMove = false;
     this.pieceMoved.x = tileTo.x;
     this.pieceMoved.y = tileTo.y;
 
-    tileTo.piece = this.pieceMoved;
-    tileFrom.piece = new Piece(
-      "none",
-      "none",
-      "",
-      this.fromTile.x,
-      this.fromTile.y,
+    tileTo.setPiece(this.pieceMoved);
+    tileFrom.setPiece(
+      new Piece("none", "none", "", this.fromTile.x, this.fromTile.y),
     );
   }
 
@@ -28,12 +26,16 @@ class Move {
     let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
 
+    // Restore the piece's position
     this.pieceMoved.x = tileFrom.x;
     this.pieceMoved.y = tileFrom.y;
+    
+    // Restore the isFirstMove state
+    this.pieceMoved.isFirstMove = this.wasFirstMove;
 
     tileFrom.setPiece(this.pieceMoved);
     if (this.type !== "attack") {
-      tileTo.setPiece(new Piece("none", "", "", tileTo.x, tileTo.y));
+      tileTo.setPiece(new Piece("none", "none", "", tileTo.x, tileTo.y));
     }
   }
 }
@@ -46,8 +48,7 @@ export class NormalMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    let tileFrom = board.tiles[this.fromTile.x][this.fromTile.y];
-    tileFrom = new Piece("none", "", "", tileFrom.x, tileFrom.y);
+    // Parent class handles all necessary piece and tile updates
   }
 }
 
@@ -62,23 +63,20 @@ export class AttackMove extends Move {
     super.makeMove(board);
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceCaptured);
     let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
-    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
+    tileFrom.setPiece(new Piece("none", "none", "", tileFrom.x, tileFrom.y));
   }
 
   unmakeMove(board) {
     super.unmakeMove(board);
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+    
+    // Restore the original captured piece position
     this.pieceCaptured.x = this.toTile.x;
     this.pieceCaptured.y = this.toTile.y;
-    const newPiece = new Piece(
-      this.pieceCaptured.type,
-      this.pieceCaptured.color,
-      "",
-      this.pieceCaptured.x,
-      this.pieceCaptured.y,
-    );
-    board.pieces.push(newPiece);
-    tileTo.setPiece(newPiece);
+    
+    // Add the original piece back to the board (not a new instance)
+    board.pieces.push(this.pieceCaptured);
+    tileTo.setPiece(this.pieceCaptured);
   }
 }
 
