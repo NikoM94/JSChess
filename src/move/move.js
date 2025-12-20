@@ -1,10 +1,9 @@
 import { Piece } from "../piece/piece.js";
 class Move {
-  constructor(pieceMoved, fromTile, toTile, board) {
+  constructor(pieceMoved, fromTile, toTile) {
     this.pieceMoved = pieceMoved;
     this.fromTile = fromTile;
     this.toTile = toTile;
-    this.board = board;
   }
 
   makeMove(board) {
@@ -16,6 +15,13 @@ class Move {
     this.pieceMoved.y = tileTo.y;
 
     tileTo.piece = this.pieceMoved;
+    tileFrom.piece = new Piece(
+      "none",
+      "none",
+      "",
+      this.fromTile.x,
+      this.fromTile.y,
+    );
   }
 
   unmakeMove(board) {
@@ -54,9 +60,7 @@ export class AttackMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    board.pieces = this.board.pieces.filter(
-      (piece) => piece !== this.pieceCaptured,
-    );
+    board.pieces = board.pieces.filter((piece) => piece !== this.pieceCaptured);
     let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
     tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
   }
@@ -69,7 +73,7 @@ export class AttackMove extends Move {
     const newPiece = new Piece(
       this.pieceCaptured.type,
       this.pieceCaptured.color,
-      this.pieceCaptured.symbol,
+      "",
       this.pieceCaptured.x,
       this.pieceCaptured.y,
     );

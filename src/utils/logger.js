@@ -24,14 +24,14 @@ export class BoardLogger {
       console.log(row);
     }
     console.log(this.loggable.currentTurn + "'s turn");
-    console.log("Moves available:");
-    this.loggable.moves.forEach((move) => {
-      const from = move.fromTile;
-      const to = move.toTile;
-      console.log(
-        `${move.type.toUpperCase()} by piece: ${move.fromTile.piece.color} ${move.fromTile.piece.type}: (${from.x},${from.y}) -> (${to.x},${to.y})`,
-      );
-    });
+    // console.log("Moves available:");
+    // this.loggable.moves.forEach((move) => {
+    //   const from = move.fromTile;
+    //   const to = move.toTile;
+    //   console.log(
+    //     `${move.type.toUpperCase()} by piece: ${move.fromTile.piece.color} ${move.fromTile.piece.type}: (${from.x},${from.y}) -> (${to.x},${to.y})`,
+    //   );
+    // });
     console.log("Captured Pieces:");
     this.loggable.capturedPieces.forEach((piece) => {
       console.log(

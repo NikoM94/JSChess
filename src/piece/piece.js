@@ -10,7 +10,7 @@ import { validCoordinate } from "../utils/boardutils.js";
 import { AttackMove, NormalMove, EnPassantMove } from "../move/move.js";
 
 class Piece {
-  constructor(type, color, imageSrc = "", x, y) {
+  constructor(type, color, imageSrc, x, y) {
     this.type = PIECES[type];
     this.color = COLORS[color];
     this.imageSrc = imageSrc;
@@ -55,12 +55,7 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(
-              this,
-              board.getTile(this.x, this.y),
-              destination,
-              board,
-            ),
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
           );
         } else {
           if (destination.getPiece().color !== this.color) {
@@ -70,7 +65,6 @@ class Piece {
                 board.getTile(this.x, this.y),
                 destination,
                 destination.getPiece(),
-                board,
               ),
             );
           }
@@ -90,12 +84,7 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(
-              this,
-              board.getTile(this.x, this.y),
-              destination,
-              board,
-            ),
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
           );
         } else {
           if (destination.getPiece().color !== this.color) {
@@ -105,7 +94,6 @@ class Piece {
                 board.getTile(this.x, this.y),
                 destination,
                 destination.getPiece(),
-                board,
               ),
             );
           }
@@ -132,12 +120,7 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(
-              this,
-              board.getTile(this.x, this.y),
-              destination,
-              board,
-            ),
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
           );
         }
         if (
@@ -150,7 +133,6 @@ class Piece {
               board.getTile(this.x, this.y),
               destination,
               destination.getPiece(),
-              board,
             ),
           );
         }
@@ -166,12 +148,7 @@ class Piece {
         const destination = board.getTile(nx, ny);
         if (destination.isEmpty()) {
           this.moves.push(
-            new NormalMove(
-              this,
-              board.getTile(this.x, this.y),
-              destination,
-              board,
-            ),
+            new NormalMove(this, board.getTile(this.x, this.y), destination),
           );
         }
         if (
@@ -184,7 +161,6 @@ class Piece {
               board.getTile(this.x, this.y),
               destination,
               destination.getPiece(),
-              board,
             ),
           );
         }
@@ -206,12 +182,7 @@ class Piece {
         const doubleStep = board.getTile(this.x + 2 * dir, this.y);
         if (doubleStep && doubleStep.isEmpty()) {
           this.moves.push(
-            new NormalMove(
-              this,
-              board.getTile(this.x, this.y),
-              doubleStep,
-              board,
-            ),
+            new NormalMove(this, board.getTile(this.x, this.y), doubleStep),
           );
         }
       }
@@ -229,7 +200,6 @@ class Piece {
           board.getTile(this.x, this.y),
           captureLeft,
           captureLeft.getPiece(),
-          board,
         ),
       );
     }
@@ -244,7 +214,6 @@ class Piece {
           board.getTile(this.x, this.y),
           captureRight,
           captureRight.getPiece(),
-          board,
         ),
       );
     }
@@ -261,7 +230,6 @@ class Piece {
             board.getTile(this.x, this.y),
             board.getTile(this.x + dir, enPassantY),
             board.enPassantPawn,
-            board,
           ),
         );
       }

@@ -14,7 +14,7 @@ import { BoardLogger } from "../utils/logger.js";
 // timers, undo/redo, load from FEN/PGN
 // Unit tests for board
 
-class Board {
+export class Board {
   constructor() {
     this.tiles = [];
     this.pieces = [];
@@ -60,12 +60,19 @@ class Board {
     const targetElement = event.target;
     if (!targetElement.classList.contains("tile")) return;
     const [newX, newY] = [
-      parseInt(targetElement.getAttribute("data-x")),
-      parseInt(targetElement.getAttribute("data-y")),
+      parseInt(targetElement.dataset.x),
+      parseInt(targetElement.dataset.y),
     ];
     if (!this.selectedPiece && !this.clickedTile) {
       this.drawAvailableTiles(newX, newY);
     } else {
+      if (!targetElement.classList.contains("receiver-tile")) {
+        document.querySelectorAll(".receiver-tile").forEach((tile) => {
+          tile.classList.remove("receiver-tile");
+        });
+        this.selectedPiece = null;
+        this.clickedTile = null;
+      }
       if (hasMoves(this.selectedPiece, newX, newY)) {
         const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
         this.updateDOM(newX, newY);
@@ -89,8 +96,8 @@ class Board {
   updateDOM(x, y) {
     const newTileElement = document.getElementById(`tile_${x}_${y}`);
     newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
-    newTileElement.setAttribute("piece-type", this.selectedPiece.type);
-    newTileElement.setAttribute("piece-color", this.selectedPiece.color);
+    newTileElement.dataset.pieceType = this.selectedPiece.type;
+    newTileElement.dataset.pieceColor = this.selectedPiece.color;
     const oldTileElement = document.getElementById(
       `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
     );
@@ -101,8 +108,6 @@ class Board {
   }
 
   updateBoard(oldX, oldY, x, y) {
-    console.log(`Moving piece from (${oldX}, ${oldY}) to (${x}, ${y})`);
-    console.log(this.currentPlayer.moves);
     const move = this.currentPlayer.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
@@ -181,5 +186,3 @@ class Board {
     this.addListeners();
   }
 }
-
-export { Board };

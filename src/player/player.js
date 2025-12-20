@@ -1,18 +1,14 @@
 import { attacksOnTile } from "../utils/boardutils.js";
+import { Board } from "../board/board.js";
 
 export class Player {
   constructor(board, color) {
-    this.board = board;
     this.color = color;
-    this.pieces = this.board.pieces.filter(
-      (piece) => piece.color === this.color,
-    );
-    this.king = this.board.pieces.find(
+    this.pieces = board.pieces.filter((piece) => piece.color === this.color);
+    this.king = board.pieces.find(
       (piece) => piece.type === "king" && piece.color === this.color,
     );
-    this.moves = this.board.moves.filter(
-      (m) => m.pieceMoved.color === this.color,
-    );
+    this.moves = board.moves.filter((m) => m.pieceMoved.color === this.color);
     this.isInCheck = false;
     this.isInCheckMate = false;
     this.canCastleKingSide = true;
@@ -37,20 +33,20 @@ export class Player {
 
   filterMoves(moveList, board) {
     const legalMoves = [];
-    let boardCopy = structuredClone(board);
-    console.log(boardCopy);
-    const kingTile = board.tiles[this.king.y][this.king.x];
+    const kingTile = board.tiles[this.king.x][this.king.y];
+    console.log(kingTile);
     for (const move of moveList) {
       if (move.type === "attack " && move.pieceCaptured.type === "king") {
         continue;
       }
-      move.makeMove(boardCopy);
-      boardCopy.updateBoard();
-      const noAttacksOnKing = attacksOnTile(boardCopy, kingTile) == 0;
+      move.makeMove(board);
+      const noAttacksOnKing = attacksOnTile(board, kingTile) == 0;
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
+      move.unmakeMove(board);
     }
+    console.log(legalMoves);
     return legalMoves;
   }
 
