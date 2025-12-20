@@ -46,7 +46,6 @@ export class Player {
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
-      // BUG: unmakeMove is not working properly
       move.unmakeMove(board);
     }
     console.log("Legal moves:", legalMoves);

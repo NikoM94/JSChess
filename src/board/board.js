@@ -27,6 +27,8 @@ export class Board {
     this.moves = this.calculateAllMoves();
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
+    this.currentTurn = "white";
+    this.currentPlayer = this.whitePlayer;
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
     this.logger.printBoard(this);
@@ -36,10 +38,6 @@ export class Board {
   getTile(x, y) {
     return validCoordinate(x, y) ? this.tiles[x][y] : null;
   }
-
-  // getOpponent() {
-  //   return this.currentTurn === "white" ? this.blackPlayer : this.whitePlayer;
-  // }
 
   calculateAllMoves() {
     let moves = [];
@@ -107,6 +105,9 @@ export class Board {
   }
 
   updateBoard(oldX, oldY, x, y) {
+    // BUG: selectedPiece's moves can contain pseudolegal moves,
+    // because filtered moves and assigned to player
+    // but selectedPiece's moves are not filtered
     const move = this.currentPlayer.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
