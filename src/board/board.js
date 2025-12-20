@@ -9,9 +9,8 @@ import {
 } from "../utils/boardutils.js";
 import { BoardLogger } from "../utils/logger.js";
 
-// TODO: checkmate, stalemate, draw, move history(should be done in a separate game class
-// and stored as FEN, can use this to set board state for undo/redo),
-// timers, undo/redo, load from FEN/PGN
+// TODO: checkmate, stalemate, draw, move history,
+// timers, undo/redo move, load from FEN/PGN
 // Unit tests for board
 
 export class Board {
@@ -81,8 +80,10 @@ export class Board {
   drawAvailableTiles(x, y) {
     this.clickedTile = this.getTile(x, y);
     this.selectedPiece = this.clickedTile.getPiece();
-    const moves = this.selectedPiece.moves;
-    moves.forEach((move) => {
+    const selectedMoves = this.currentPlayer.moves.filter(
+      (move) => move.fromTile.x === x && move.fromTile.y === y,
+    );
+    selectedMoves.forEach((move) => {
       const tileElement = document.getElementById(
         `tile_${move.toTile.x}_${move.toTile.y}`,
       );
@@ -137,13 +138,13 @@ export class Board {
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
-    this.whitePlayer.updatePlayer(this);
-    this.blackPlayer.updatePlayer(this);
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.currentPlayer =
       this.currentPlayer === this.whitePlayer
         ? this.blackPlayer
         : this.whitePlayer;
+    this.whitePlayer.updatePlayer(this);
+    this.blackPlayer.updatePlayer(this);
     this.selectedPiece = null;
     this.clickedTile = null;
     this.logger.printBoard(this);
