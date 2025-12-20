@@ -7,7 +7,12 @@ import {
   KNIGHT_MOVES,
 } from "../board/constants.js";
 import { validCoordinate } from "../utils/boardutils.js";
-import { AttackMove, NormalMove, EnPassantMove } from "../move/move.js";
+import {
+  AttackMove,
+  NormalMove,
+  DoubleStep,
+  EnPassantMove,
+} from "../move/move.js";
 
 class Piece {
   constructor(type, color, imageSrc, x, y) {
@@ -16,7 +21,6 @@ class Piece {
     this.imageSrc = imageSrc;
     this.x = x;
     this.y = y;
-    this.id = `${this.x}_${this.y}`;
     this.moves = [];
     this.isFirstMove = true;
   }
@@ -176,13 +180,13 @@ class Piece {
     const startRow = this.color === "white" ? 6 : 1;
     if (destination && destination.isEmpty()) {
       this.moves.push(
-        new NormalMove(this, board.getTile(this.x, this.y), destination, board),
+        new NormalMove(this, board.getTile(this.x, this.y), destination),
       );
       if (this.x === startRow) {
         const doubleStep = board.getTile(this.x + 2 * dir, this.y);
         if (doubleStep && doubleStep.isEmpty()) {
           this.moves.push(
-            new NormalMove(this, board.getTile(this.x, this.y), doubleStep),
+            new DoubleStep(this, board.getTile(this.x, this.y), doubleStep),
           );
         }
       }
@@ -229,7 +233,7 @@ class Piece {
             this,
             board.getTile(this.x, this.y),
             board.getTile(this.x + dir, enPassantY),
-            board.enPassantPawn,
+            board.getTile(enPassantX, enPassantY).getPiece(),
           ),
         );
       }

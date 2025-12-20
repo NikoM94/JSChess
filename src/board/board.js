@@ -117,16 +117,27 @@ export class Board {
         move.toTile.y == y
       );
     });
-    // TODO: promotion, castling, fix en passant
+    this.enPassantPawn = null;
+    // TODO: promotion, castling
     switch (move.type) {
       case "normal":
         move.makeMove(this);
+        break;
+      case "doubleStep":
+        move.makeMove(this);
+        this.enPassantPawn = move.pieceMoved;
         break;
       case "attack":
         this.capturedPieces.push(move.pieceCaptured);
         move.makeMove(this);
         break;
-      case "en_passant":
+      case "enPassant":
+        const pieceCapturedElement = document.getElementById(
+          `tile_${move.pieceCaptured.x}_${move.pieceCaptured.y}`,
+        );
+        pieceCapturedElement.style.backgroundImage = "";
+        pieceCapturedElement.dataset.pieceType = "none";
+        pieceCapturedElement.dataset.pieceColor = "none";
         this.capturedPieces.push(move.pieceCaptured);
         move.makeMove(this);
         break;
