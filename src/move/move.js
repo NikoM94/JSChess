@@ -16,13 +16,9 @@ class Move {
     this.pieceMoved.x = tileTo.x;
     this.pieceMoved.y = tileTo.y;
 
-    tileTo.piece = this.pieceMoved;
-    tileFrom.piece = new Piece(
-      "none",
-      "none",
-      "",
-      this.fromTile.x,
-      this.fromTile.y,
+    tileTo.setPiece(this.pieceMoved);
+    tileFrom.setPiece(
+      new Piece("none", "none", "", this.fromTile.x, this.fromTile.y),
     );
   }
 
@@ -35,9 +31,7 @@ class Move {
     this.pieceMoved.y = tileFrom.y;
     
     // Restore the isFirstMove state
-    if (this.wasFirstMove !== undefined) {
-      this.pieceMoved.isFirstMove = this.wasFirstMove;
-    }
+    this.pieceMoved.isFirstMove = this.wasFirstMove;
 
     tileFrom.setPiece(this.pieceMoved);
     if (this.type !== "attack") {
