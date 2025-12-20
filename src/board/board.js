@@ -113,16 +113,21 @@ export class Board {
         move.toTile.y == y
       );
     });
-    // TODO: promotion, castling, fix en passant
+    this.enPassantPawn = null;
+    // TODO: promotion, castling
     switch (move.type) {
       case "normal":
         move.makeMove(this);
+        break;
+      case "doubleStep":
+        move.makeMove(this);
+        this.enPassantPawn = move.pieceMoved;
         break;
       case "attack":
         this.capturedPieces.push(move.pieceCaptured);
         move.makeMove(this);
         break;
-      case "en_passant":
+      case "enPassant":
         this.capturedPieces.push(move.pieceCaptured);
         move.makeMove(this);
         break;
