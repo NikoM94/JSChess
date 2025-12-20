@@ -38,10 +38,6 @@ export class Board {
     return validCoordinate(x, y) ? this.tiles[x][y] : null;
   }
 
-  // getOpponent() {
-  //   return this.currentTurn === "white" ? this.blackPlayer : this.whitePlayer;
-  // }
-
   calculateAllMoves() {
     let moves = [];
     this.pieces.forEach((piece) => {
@@ -84,8 +80,10 @@ export class Board {
   drawAvailableTiles(x, y) {
     this.clickedTile = this.getTile(x, y);
     this.selectedPiece = this.clickedTile.getPiece();
-    const moves = this.selectedPiece.moves;
-    moves.forEach((move) => {
+    const selectedMoves = this.currentPlayer.moves.filter(
+      (move) => move.fromTile.x === x && move.fromTile.y === y,
+    );
+    selectedMoves.forEach((move) => {
       const tileElement = document.getElementById(
         `tile_${move.toTile.x}_${move.toTile.y}`,
       );
