@@ -97,8 +97,16 @@ export class EnPassantMove extends Move {
   }
 
   makeMove(board) {
+    // Store the captured pawn's position before super.makeMove changes anything
+    this.capturedPawnX = this.pieceCaptured.x;
+    this.capturedPawnY = this.pieceCaptured.y;
+
     super.makeMove(board);
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceCaptured);
+
+    // Clear the tile where the captured pawn was (different from toTile in en passant)
+    let capturedPawnTile = board.getTile(this.capturedPawnX, this.capturedPawnY);
+    capturedPawnTile.setPiece(new Piece("none", "none", "", this.capturedPawnX, this.capturedPawnY));
   }
 
   unmakeMove(board) {
@@ -106,9 +114,10 @@ export class EnPassantMove extends Move {
 
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
 
+    // Restore the captured pawn at its original position
     let enPassantCapturedTile = board.getTile(
-      this.pieceCaptured.x,
-      this.pieceCaptured.y,
+      this.capturedPawnX,
+      this.capturedPawnY,
     );
 
     board.pieces.push(this.pieceCaptured);
