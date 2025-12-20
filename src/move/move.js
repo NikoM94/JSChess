@@ -54,8 +54,7 @@ export class NormalMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    let tileFrom = board.tiles[this.fromTile.x][this.fromTile.y];
-    tileFrom = new Piece("none", "", "", tileFrom.x, tileFrom.y);
+    // tileFrom is already set by parent class, no additional work needed
   }
 }
 
@@ -70,7 +69,7 @@ export class AttackMove extends Move {
     super.makeMove(board);
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceCaptured);
     let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
-    tileFrom.setPiece(new Piece("none", "", "", tileFrom.x, tileFrom.y));
+    tileFrom.setPiece(new Piece("none", "none", "", tileFrom.x, tileFrom.y));
   }
 
   unmakeMove(board) {
