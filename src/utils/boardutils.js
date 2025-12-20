@@ -25,6 +25,9 @@ export function attacksOnTile(board, tile) {
     p.calculateMoves(board);
     p.moves.forEach((move) => {
       if (move.toTile.x === tile.x && move.toTile.y === tile.y) {
+        if (move.pieceMoved.type === "queen") {
+          console.log(move.toTile.x, move.toTile.y);
+        }
         attacks++;
       }
     });

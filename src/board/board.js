@@ -137,13 +137,13 @@ export class Board {
     this.receiverTiles = [];
     this.selectedPiece = null;
     this.moves = this.calculateAllMoves();
-    this.whitePlayer.updatePlayer(this);
-    this.blackPlayer.updatePlayer(this);
     this.currentTurn = this.currentTurn === "white" ? "black" : "white";
     this.currentPlayer =
       this.currentPlayer === this.whitePlayer
         ? this.blackPlayer
         : this.whitePlayer;
+    this.whitePlayer.updatePlayer(this);
+    this.blackPlayer.updatePlayer(this);
     this.selectedPiece = null;
     this.clickedTile = null;
     this.logger.printBoard();

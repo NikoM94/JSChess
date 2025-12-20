@@ -39,7 +39,6 @@ export class Player {
         continue;
       }
       move.makeMove(board);
-      // Get the king's current position after the move (it may have moved)
       const currentKingTile = board.tiles[this.king.x][this.king.y];
       const noAttacksOnKing = attacksOnTile(board, currentKingTile) == 0;
       if (noAttacksOnKing) {
