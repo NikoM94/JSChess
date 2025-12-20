@@ -48,7 +48,7 @@ export class NormalMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    // tileFrom is already set by parent class, no additional work needed
+    // Parent class handles all necessary piece and tile updates
   }
 }
 
