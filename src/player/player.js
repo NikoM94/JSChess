@@ -1,12 +1,14 @@
 import { attacksOnTile } from "../utils/boardutils.js";
+import { Board } from "../board/board.js";
 
 export class Player {
   constructor(board, color) {
-    this.board = board;
     this.color = color;
-    this.pieces = this.board.pieces.filter((piece) => piece.color === this.color);
-    this.king = this.board.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
-    this.moves = this.board.moves.filter(m => m.pieceMoved.color === this.color);
+    this.pieces = board.pieces.filter((piece) => piece.color === this.color);
+    this.king = board.pieces.find(
+      (piece) => piece.type === "king" && piece.color === this.color,
+    );
+    this.moves = board.moves.filter((m) => m.pieceMoved.color === this.color);
     this.isInCheck = false;
     this.isInCheckMate = false;
     this.canCastleKingSide = true;
@@ -23,34 +25,36 @@ export class Player {
   }
 
   updateMoves(board) {
-    let thisMoves = board.moves.filter(m => {
+    let thisMoves = board.moves.filter((m) => {
       return m.pieceMoved.color === this.color;
-    })
-    // return this.filterMoves(thisMoves, board);
-    return thisMoves;
+    });
+    // return thisMoves;
+    return this.filterMoves(thisMoves, board);
   }
 
   filterMoves(moveList, board) {
     const legalMoves = [];
-    moveList.forEach((move) => {
-      if (move.type === "attack" && move.toTile.getPiece().type === "king") {
-        return;
+    console.log("Filtering moves for", this.color);
+    for (const move of moveList) {
+      if (move.type === "attack" && move.pieceCaptured.type === "king") {
+        continue;
       }
       move.makeMove(board);
-      const playerKing = board.pieces.find((p) => p.type === "king" && p.color === this.color);
-      if (attacksOnTile(board, board.getTile(playerKing.x, playerKing.y), this.color) === 0) {
+      // Get the king's current position after the move (it may have moved)
+      const currentKingTile = board.tiles[this.king.x][this.king.y];
+      const noAttacksOnKing = attacksOnTile(board, currentKingTile) == 0;
+      if (noAttacksOnKing) {
         legalMoves.push(move);
       }
       // BUG: unmakeMove is not working properly
       move.unmakeMove(board);
-    });
+    }
+    console.log("Legal moves:", legalMoves);
     return legalMoves;
   }
 
   updateInCheck(board) {
-    return (
-      attacksOnTile(board, board.getTile(this.king.x, this.king.y), this.color) != 0
-    );
+    return attacksOnTile(board, board.getTile(this.king.x, this.king.y)) != 0;
   }
   updateInCheckMate() {
     return this.isInCheck && this.moves.length === 0;

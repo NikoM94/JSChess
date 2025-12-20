@@ -1,4 +1,4 @@
-import Board from "../src/board/board.js";
+import { Board } from "../src/board/board.js";
 import assert from "assert";
 
 describe("Board", function () {
