@@ -33,20 +33,21 @@ export class Player {
 
   filterMoves(moveList, board) {
     const legalMoves = [];
-    const kingTile = board.tiles[this.king.x][this.king.y];
-    console.log(kingTile);
+    console.log("Filtering moves for", this.color);
     for (const move of moveList) {
       if (move.type === "attack " && move.pieceCaptured.type === "king") {
         continue;
       }
       move.makeMove(board);
-      const noAttacksOnKing = attacksOnTile(board, kingTile) == 0;
+      // Get the king's current position after the move (it may have moved)
+      const currentKingTile = board.tiles[this.king.x][this.king.y];
+      const noAttacksOnKing = attacksOnTile(board, currentKingTile) == 0;
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
       move.unmakeMove(board);
     }
-    console.log(legalMoves);
+    console.log("Legal moves:", legalMoves);
     return legalMoves;
   }
 
