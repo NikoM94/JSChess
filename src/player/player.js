@@ -35,7 +35,7 @@ export class Player {
     const legalMoves = [];
     console.log("Filtering moves for", this.color);
     for (const move of moveList) {
-      if (move.type === "attack " && move.pieceCaptured.type === "king") {
+      if (move.type === "attack" && move.pieceCaptured.type === "king") {
         continue;
       }
       move.makeMove(board);

@@ -41,7 +41,7 @@ class Move {
 
     tileFrom.setPiece(this.pieceMoved);
     if (this.type !== "attack") {
-      tileTo.setPiece(new Piece("none", "", "", tileTo.x, tileTo.y));
+      tileTo.setPiece(new Piece("none", "none", "", tileTo.x, tileTo.y));
     }
   }
 }
