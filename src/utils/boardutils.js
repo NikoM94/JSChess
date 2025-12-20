@@ -18,12 +18,18 @@ export function chessCoordinateToXY(coordinate) {
 
 export function attacksOnTile(board, tile) {
   let attacks = 0;
+  // Recalculate moves for all pieces to get accurate attacks based on current board state
   board.pieces.forEach((p) => {
+    // Save the original moves to restore after checking
+    const originalMoves = p.moves;
+    p.calculateMoves(board);
     p.moves.forEach((move) => {
       if (move.toTile.x === tile.x && move.toTile.y === tile.y) {
         attacks++;
       }
     });
+    // Restore original moves to avoid side effects
+    p.moves = originalMoves;
   });
   return attacks;
 }
