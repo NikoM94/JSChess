@@ -140,8 +140,15 @@ export class PromotionMove extends Move {
 }
 
 export class CastleMove extends Move {
-  constructor(pieceMoved, fromTile, toTile, castleRookFrom, castleRookTo, rook) {
-    super(pieceMoved, fromTile, toTile,);
+  constructor(
+    pieceMoved,
+    fromTile,
+    toTile,
+    castleRookFrom,
+    castleRookTo,
+    rook,
+  ) {
+    super(pieceMoved, fromTile, toTile);
     this.castleRookFrom = castleRookFrom;
     this.castleRookTo = castleRookTo;
     this.type = "castle";
@@ -150,7 +157,7 @@ export class CastleMove extends Move {
 
   makeMove(board) {
     super.makeMove(board);
-    rook = this.rook;
+    let rook = this.rook;
     rook.x = this.castleRookTo.x;
     rook.y = this.castleRookTo.y;
     let tileRookFrom = board.getTile(

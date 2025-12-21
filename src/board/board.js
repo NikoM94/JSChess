@@ -67,10 +67,9 @@ export class Board {
         });
         this.selectedPiece = null;
         this.clickedTile = null;
-      }
-      if (hasMoves(this.selectedPiece, newX, newY)) {
+      } else {
         const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
-        this.updateDOM(newX, newY);
+        this.updateDOM(oldX, oldY, newX, newY);
         this.updateBoard(oldX, oldY, newX, newY);
       }
     }
@@ -90,24 +89,22 @@ export class Board {
     });
   }
 
-  updateDOM(x, y) {
+  updateDOM(oldX, oldY, x, y) {
     const newTileElement = document.getElementById(`tile_${x}_${y}`);
     newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
     newTileElement.dataset.pieceType = this.selectedPiece.type;
     newTileElement.dataset.pieceColor = this.selectedPiece.color;
-    const oldTileElement = document.getElementById(
-      `tile_${this.selectedPiece.x}_${this.selectedPiece.y}`,
-    );
+    const oldTileElement = document.getElementById(`tile_${oldX}_${oldY}`);
+    console.log(oldTileElement);
     oldTileElement.style.backgroundImage = "";
+    oldTileElement.dataset.pieceColor = "none";
+    oldTileElement.dataset.pieceType = "none";
     document.querySelectorAll(".receiver-tile").forEach((tile) => {
       tile.classList.remove("receiver-tile");
     });
   }
 
   updateBoard(oldX, oldY, x, y) {
-    // BUG: selectedPiece's moves can contain pseudolegal moves,
-    // because filtered moves and assigned to player
-    // but selectedPiece's moves are not filtered
     const move = this.currentPlayer.moves.find((move) => {
       return (
         move.fromTile.x == oldX &&
@@ -142,6 +139,20 @@ export class Board {
         break;
       case "castle":
         move.makeMove(this);
+        const rookFromElement = document.getElementById(
+          `tile_${move.castleRookFrom.x}_${move.castleRookFrom.y}`,
+        );
+        const rookToElement = document.getElementById(
+          `tile_${move.castleRookTo.x}_${move.castleRookTo.y}`,
+        );
+        console.log("Rook from: ", rookFromElement);
+        console.log("Rook to: ", rookToElement);
+        rookToElement.style.backgroundImage = `url(${move.rook.imageSrc})`;
+        rookFromElement.style.backgroundImage = "";
+        rookToElement.dataset.pieceType = move.rook.type;
+        rookToElement.dataset.pieceColor = move.rook.color;
+        rookFromElement.dataset.pieceType = "none";
+        rookFromElement.dataset.pieceColor = "none";
         break;
     }
     this.nextTurn();
