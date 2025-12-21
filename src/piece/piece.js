@@ -6,7 +6,7 @@ import {
   KING_MOVES,
   KNIGHT_MOVES,
 } from "../board/constants.js";
-import { validCoordinate } from "../utils/boardutils.js";
+import { attacksOnTile, validCoordinate } from "../utils/boardutils.js";
 import {
   AttackMove,
   NormalMove,
@@ -25,7 +25,7 @@ class Piece {
     this.isFirstMove = true;
   }
 
-  calculateMoves(board) {
+  calculateMoves(board, options = {}) {
     this.moves = [];
     switch (this.type) {
       case "pawn":
@@ -44,7 +44,9 @@ class Piece {
         this.calculateQueenMoves(board);
         break;
       case "king":
-        this.calculateKingMoves(board);
+        if (!options.skipKingMoves) {
+          this.calculateKingMoves(board);
+        }
         break;
       default:
         this.moves = [];
@@ -142,6 +144,27 @@ class Piece {
         }
       }
     }
+    // if (this.isFirstMove) {
+    //   const x = this.color === "white" ? 7 : 0;
+    //   const maybeRookKingSide = board.getTile(x, 7).getPiece();
+    //   const maybeRookQueenSide = board.getTile(x, 0).getPiece();
+    //   if (maybeRookKingSide.type === "rook") {
+    //     if (maybeRookKingSide.isFirstMove) {
+    //       const kingTo = board.getTile(x, 6);
+    //       const rookTo = board.getTile(x, 5);
+    //       if (kingTo.isEmpty() && rookTo.isEmpty()) {
+    //         for (let y = 5; y <= 6; y++) {
+    //           const tile = board.getTile(x, y);
+    //           // skip if tile is attacked
+    //           // skipKingMoves to avoid infinite recursion
+    //           if (attacksOnTile(board, tile, this.color === "white" ? "black" : "white", { skipKingMoves: true }) === 0) {
+    //
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   calculateKnightMoves(board) {

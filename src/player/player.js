@@ -1,5 +1,6 @@
 import { attacksOnTile } from "../utils/boardutils.js";
 import { Board } from "../board/board.js";
+import { CastleMove } from "../move/move.js";
 
 export class Player {
   constructor(board, color) {
@@ -17,11 +18,12 @@ export class Player {
 
   updatePlayer(board) {
     this.pieces = this.updatePieces(board);
-    this.king = this.pieces.find((piece) => piece.type === "king");
+    this.king = this.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
     this.isInCheck = this.updateInCheck(board);
     this.isInCheckMate = this.updateInCheckMate();
     this.updateCanCastle(board);
     this.moves = this.updateMoves(board);
+    this.calculateCastleMoves(board);
   }
 
   updateMoves(board) {
@@ -34,7 +36,6 @@ export class Player {
 
   filterMoves(moveList, board) {
     const legalMoves = [];
-    console.log("Filtering moves for", this.color);
     for (const move of moveList) {
       if (move.type === "attack" && move.pieceCaptured.type === "king") {
         continue;
@@ -47,7 +48,6 @@ export class Player {
       }
       move.unmakeMove(board);
     }
-    console.log("Legal moves:", legalMoves);
     return legalMoves;
   }
 
@@ -98,5 +98,47 @@ export class Player {
     }
     this.canCastleKingSide = canCastleKing;
     this.canCastleQueenSide = canCastleQueen;
+  }
+
+  calculateCastleMoves(board) {
+    const moves = [];
+
+    if (!this.canCastleKingSide) {
+      console.log("Can castle king side");
+      let x = this.color === "white" ? 7 : 0;
+      const king = this.king;
+      console.log(king);
+      const rookFrom = board.getTile(x, 7);
+      const rookTo = board.getTile(x, 5);
+      moves.push(
+        new CastleMove(
+          king,
+          board.getTile(king.x, king.y),
+          board.getTile(king.x, 6),
+          rookFrom,
+          rookTo,
+          rookFrom.getPiece(),
+        ),
+      );
+    }
+
+    if (!this.canCastleQueenSide) {
+      console.log("Can castle queen side");
+      let x = this.color === "white" ? 7 : 0;
+      const king = this.king;
+      const rookFrom = board.getTile(x, 0);
+      const rookTo = board.getTile(x, 3);
+      moves.push(
+        new CastleMove(
+          king,
+          board.getTile(king.x, king.y),
+          board.getTile(king.x, 2),
+          rookFrom,
+          rookTo,
+          rookFrom.getPiece(),
+        ),
+      );
+    }
+    this.moves.push(...moves);
   }
 }

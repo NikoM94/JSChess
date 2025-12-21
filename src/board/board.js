@@ -8,7 +8,6 @@ import {
   checkTurnAndSelectedPiece,
 } from "../utils/boardutils.js";
 import { BoardLogger } from "../utils/logger.js";
-
 // TODO: checkmate, stalemate, draw, move history,
 // timers, undo/redo move, load from FEN/PGN
 // Unit tests for board
@@ -139,6 +138,9 @@ export class Board {
         pieceCapturedElement.dataset.pieceType = "none";
         pieceCapturedElement.dataset.pieceColor = "none";
         this.capturedPieces.push(move.pieceCaptured);
+        move.makeMove(this);
+        break;
+      case "castle":
         move.makeMove(this);
         break;
     }

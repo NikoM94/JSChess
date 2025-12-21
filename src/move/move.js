@@ -133,17 +133,50 @@ export class EnPassantMove extends Move {
 
 export class PromotionMove extends Move {
   constructor(pieceMoved, fromTile, toTile, promoteTo) {
-    super(pieceMoved, toTile, fromTile);
+    super(pieceMoved, fromTile, toTile);
     this.promoteTo = promoteTo; //handle this dynamically later
     this.type = "promotion";
   }
 }
 
 export class CastleMove extends Move {
-  constructor(pieceMoved, fromTile, toTile, castleRookFrom, castleRookTo) {
-    super(pieceMoved, toTile, fromTile);
+  constructor(pieceMoved, fromTile, toTile, castleRookFrom, castleRookTo, rook) {
+    super(pieceMoved, fromTile, toTile,);
     this.castleRookFrom = castleRookFrom;
     this.castleRookTo = castleRookTo;
     this.type = "castle";
+    this.rook = rook;
+  }
+
+  makeMove(board) {
+    super.makeMove(board);
+    rook = this.rook;
+    rook.x = this.castleRookTo.x;
+    rook.y = this.castleRookTo.y;
+    let tileRookFrom = board.getTile(
+      this.castleRookFrom.x,
+      this.castleRookFrom.y,
+    );
+    let tileRookTo = board.getTile(this.castleRookTo.x, this.castleRookTo.y);
+    tileRookTo.setPiece(rook);
+    tileRookFrom.setPiece(
+      new Piece("none", "none", "", tileRookFrom.x, tileRookFrom.y),
+    );
+  }
+
+  unmakeMove(board) {
+    super.unmakeMove(board);
+    let rook = board.getTile(this.castleRookTo.x, this.castleRookTo.y).piece;
+    rook.x = this.castleRookFrom.x;
+    rook.y = this.castleRookFrom.y;
+    let tileRookFrom = board.getTile(
+      this.castleRookFrom.x,
+      this.castleRookFrom.y,
+    );
+    let tileRookTo = board.getTile(this.castleRookTo.x, this.castleRookTo.y);
+    tileRookFrom.setPiece(rook);
+    tileRookTo.setPiece(
+      new Piece("none", "none", "", tileRookTo.x, tileRookTo.y),
+    );
   }
 }
