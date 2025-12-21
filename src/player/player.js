@@ -42,7 +42,7 @@ export class Player {
       }
       move.makeMove(board);
       const currentKingTile = board.tiles[this.king.x][this.king.y];
-      const noAttacksOnKing = attacksOnTile(board, currentKingTile) == 0;
+      const noAttacksOnKing = attacksOnTile(board, currentKingTile, this.color) == 0;
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
@@ -97,19 +97,19 @@ export class Player {
     }
 
     let x = this.color === "white" ? 7 : 0;
-    let canCastleKing = true;
-    let canCastleQueen = true;
     // queen side
-    for (let y = x - 1; y > 0; y--) {
+    let canCastleQueen = true;
+    for (let y = 3; y > 0; y--) {
       const tile = board.getTile(x, y);
-      if (!tile.isEmpty() || attacksOnTile(board, tile) > 0) {
+      if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
         canCastleQueen = false;
       }
     }
     // king side
-    for (let y = x + 1; x < 7; x++) {
+    let canCastleKing = true;
+    for (let y = 5; y < 7; y++) {
       const tile = board.getTile(x, y);
-      if (!tile.isEmpty() || attacksOnTile(board, tile) > 0) {
+      if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
         canCastleKing = false;
       }
     }
@@ -121,7 +121,6 @@ export class Player {
     const moves = [];
 
     if (this.canCastleKingSide) {
-      console.log("Can castle king side");
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
       console.log(king);
@@ -140,7 +139,6 @@ export class Player {
     }
 
     if (this.canCastleQueenSide) {
-      console.log("Can castle queen side");
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
       const rookFrom = board.getTile(x, 0);

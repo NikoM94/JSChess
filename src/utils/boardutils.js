@@ -16,18 +16,16 @@ export function chessCoordinateToXY(coordinate) {
   return { x, y };
 }
 
-export function attacksOnTile(board, tile, options = {}) {
+export function attacksOnTile(board, tile, color, options = {}) {
   let attacks = 0;
   // Recalculate moves for all pieces to get accurate attacks based on current board state
   board.pieces.forEach((p) => {
     // Save the original moves to restore after checking
+    if (p.color === color) return;
     const originalMoves = p.moves;
     p.calculateMoves(board, options);
     p.moves.forEach((move) => {
       if (move.toTile.x === tile.x && move.toTile.y === tile.y) {
-        if (move.pieceMoved.type === "queen") {
-          console.log(move.toTile.x, move.toTile.y);
-        }
         attacks++;
       }
     });
