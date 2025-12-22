@@ -9,16 +9,12 @@ import {
   createEmptyTile,
 } from "../utils/boardutils.js";
 import { BoardLogger } from "../utils/logger.js";
-// TODO: checkmate, stalemate, draw, move history,
-// timers, undo/redo move, load from FEN/PGN
-// Unit tests for board
 
 export class Board {
-  constructor(loadPosition = PRESETS.standard) {
+  constructor(loadPosition = "") {
     this.tiles = [];
     this.pieces = [];
-    this.createBoard(loadPosition);
-    this.drawBoard();
+    this.createStartingPosition();
     this.selectedPiece = null;
     this.clickedTile = null;
     this.enPassantPawn = null;
@@ -32,6 +28,8 @@ export class Board {
     this.logger = new BoardLogger(this);
     this.logger.printBoard(this);
     this.turns = 0;
+    this.loadPositionFromFEN(loadPosition);
+    this.drawBoard();
   }
 
   getTile(x, y) {
@@ -114,7 +112,6 @@ export class Board {
       );
     });
     this.enPassantPawn = null;
-    // TODO: promotion, castling
     switch (move.type) {
       case "normal":
         move.makeMove(this);
@@ -152,6 +149,12 @@ export class Board {
         rookFromElement.dataset.pieceType = "none";
         rookFromElement.dataset.pieceColor = "none";
         break;
+      case "promotion":
+        if (move.pieceCaptured) {
+          this.capturedPieces.push(move.pieceCaptured);
+        }
+        move.makeMove(this);
+        break;
     }
     this.nextTurn();
   }
@@ -172,8 +175,13 @@ export class Board {
     this.logger.printBoard(this);
   }
 
-  createBoard(loadPosition) {
+  createStartingPosition() {
+    this.loadPositionFromFEN(PRESETS.standard);
+  }
 
+  loadPositionFromFEN(fen) {
+    this.tiles = [];
+    this.pieces = [];
     for (let x = 0; x < 8; x++) {
       const row = [];
       for (let y = 0; y < 8; y++) {
@@ -182,7 +190,7 @@ export class Board {
       this.tiles.push(row);
     }
 
-    const splits = loadPosition.split(" ");
+    const splits = fen.split(" ");
     const [rows, meta] = [splits[0].split("/"), splits.slice(1)];
 
     for (let i = 0; i < rows.length; i++) {
@@ -204,38 +212,28 @@ export class Board {
 
     const castlingRights = Array.from(meta[1]);
     if (!castlingRights.includes("K")) {
-      const maybeWhiteRookKingSide = this.getTile(7, 7).getPiece();
-      if (maybeWhiteRookKingSide.type === "rook") {
-        maybeWhiteRookKingSide.isFirstMove = false;
-      }
+      this.whitePlayer.canCastleKingSide = false;
     }
     if (!castlingRights.includes("Q")) {
-      const maybeWhiteRookQueenSide = this.getTile(7, 0).getPiece();
-      if (maybeWhiteRookQueenSide.type === "rook") {
-        maybeWhiteRookQueenSide.isFirstMove = false;
-      }
+      this.whitePlayer.canCastleQueenSide = false;
     }
     if (!castlingRights.includes("k")) {
-      const maybeBlackRookKingSide = this.getTile(0, 7).getPiece();
-      if (maybeBlackRookKingSide.type === "rook") {
-        maybeBlackRookKingSide.isFirstMove = false;
-      }
+      this.blackPlayer.canCastleKingSide = false;
     }
     if (!castlingRights.includes("q")) {
-      const maybeBlackRookQueenSide = this.getTile(0, 0).getPiece();
-      if (maybeBlackRookQueenSide.type === "rook") {
-        maybeBlackRookQueenSide.isFirstMove = false;
-      }
+      this.blackPlayer.canCastleQueenSide = false;
     }
+
     const enPassantTarget = meta[2];
+
     if (enPassantTarget !== "-") {
       const file = enPassantTarget.charCodeAt(0) - "a".charCodeAt(0);
       const rank = 8 - parseInt(enPassantTarget[1]);
       const enPassantTile = this.getTile(rank, file);
       const enPassantPiece = enPassantTile.getPiece();
+      this.enPassantPawn = enPassantPiece;
     }
   }
-
 
   drawBoard() {
     const boardElement = document.querySelector(".game-container");

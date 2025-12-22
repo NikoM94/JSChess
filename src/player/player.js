@@ -70,9 +70,9 @@ export class Player {
     if (this.isInCheck) {
       return;
     }
+
     let x = this.color === "white" ? 7 : 0;
 
-    // queen side
     if (this.canCastleQueenSide) {
       var canCastleQueen = true;
       for (let y = 3; y > 0; y--) {
@@ -83,7 +83,6 @@ export class Player {
       }
     }
 
-    // king side
     if (this.canCastleKingSide) {
       var canCastleKing = true;
       for (let y = 5; y < 7; y++) {
@@ -96,7 +95,6 @@ export class Player {
     if (canCastleKing) {
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
-      console.log(king);
       const rookFrom = board.getTile(x, 7);
       const rookTo = board.getTile(x, 5);
       moves.push(
@@ -107,7 +105,7 @@ export class Player {
           rookFrom,
           rookTo,
           rookFrom.getPiece(),
-        ),
+        )
       );
     }
 
@@ -124,7 +122,7 @@ export class Player {
           rookFrom,
           rookTo,
           rookFrom.getPiece(),
-        ),
+        )
       );
     }
     this.moves.push(...moves);

@@ -46,6 +46,7 @@ class Move {
     // Restore the isFirstMove state
     this.pieceMoved.isFirstMove = this.wasFirstMove;
 
+    // Restore castling rights
     board.currentPlayer.canCastleKingSide = this.canCastleKingSideBeforeMove;
     board.currentPlayer.canCastleQueenSide = this.canCastleQueenSideBeforeMove;
 
@@ -150,10 +151,44 @@ export class EnPassantMove extends Move {
 }
 
 export class PromotionMove extends Move {
-  constructor(pieceMoved, fromTile, toTile, promoteTo) {
+  constructor(pieceMoved, fromTile, toTile, pieceCaptured = null) {
     super(pieceMoved, fromTile, toTile);
-    this.promoteTo = promoteTo; //handle this dynamically later
     this.type = "promotion";
+    this.pieceCaptured = pieceCaptured;
+  }
+
+  makeMove(board) {
+    super.makeMove(board);
+
+    if (this.pieceCaptured) {
+      board.pieces = board.pieces.filter(
+        (piece) => piece !== this.pieceCaptured,
+      );
+    }
+
+    let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+
+    // Promote the pawn to a queen for now
+    const promotedPiece = new Piece(
+      "queen",
+      this.pieceMoved.color,
+      `${this.pieceMoved.color}_queen`,
+      tileTo.x,
+      tileTo.y
+    );
+    tileTo.setPiece(promotedPiece);
+    // Update the board's pieces list
+    board.pieces = board.pieces.filter((piece) => piece !== this.pieceMoved);
+    board.pieces.push(promotedPiece);
+  }
+
+  unmakeMove(board) {
+    super.unmakeMove(board);
+    if (this.pieceCaptured) {
+      let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+      board.pieces.push(this.pieceCaptured);
+      tileTo.setPiece(this.pieceCaptured);
+    }
   }
 }
 

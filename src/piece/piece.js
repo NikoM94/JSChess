@@ -12,6 +12,7 @@ import {
   NormalMove,
   DoubleStep,
   EnPassantMove,
+  PromotionMove
 } from "../move/move.js";
 
 class Piece {
@@ -198,70 +199,106 @@ class Piece {
   calculatePawnMoves(board) {
     // TODO: promotion
     const dir = this.color === "white" ? -1 : 1;
-    if (this.x + dir < 0 || this.x + dir > 7) return;
-    const destination = board.getTile(this.x + dir, this.y);
-    const startRow = this.color === "white" ? 6 : 1;
+    const x = this.x;
+    const y = this.y;
+    const color = this.color;
+    if (x + dir < 0 || x + dir > 7) return;
+    const destination = board.getTile(x + dir, y);
+    const startRow = color === "white" ? 6 : 1;
+    const promotionRank = color === "white" ? 0 : 7;
     if (destination && destination.isEmpty()) {
-      this.moves.push(
-        new NormalMove(this, board.getTile(this.x, this.y), destination),
-      );
-      if (this.x === startRow) {
-        const doubleStep = board.getTile(this.x + 2 * dir, this.y);
+      if (x + dir === promotionRank) {
+        this.moves.push(
+          new PromotionMove(
+            this,
+            board.getTile(x, y),
+            destination,
+            null,
+          )
+        );
+      } else {
+        this.moves.push(
+          new NormalMove(this, board.getTile(x, y), destination),
+        );
+      }
+      if (x === startRow) {
+        const doubleStep = board.getTile(x + 2 * dir, y);
         if (doubleStep && doubleStep.isEmpty()) {
           this.moves.push(
-            new DoubleStep(this, board.getTile(this.x, this.y), doubleStep),
+            new DoubleStep(this, board.getTile(x, y), doubleStep),
           );
         }
       }
-    }
-    const captureLeft = board.getTile(this.x + dir, this.y - 1);
-    const captureRight = board.getTile(this.x + dir, this.y + 1);
-    if (
-      captureLeft &&
-      !captureLeft.isEmpty() &&
-      captureLeft.getPiece().color !== this.color
-    ) {
-      this.moves.push(
-        new AttackMove(
-          this,
-          board.getTile(this.x, this.y),
-          captureLeft,
-          captureLeft.getPiece(),
-        ),
-      );
-    }
-    if (
-      captureRight &&
-      !captureRight.isEmpty() &&
-      captureRight.getPiece().color !== this.color
-    ) {
-      this.moves.push(
-        new AttackMove(
-          this,
-          board.getTile(this.x, this.y),
-          captureRight,
-          captureRight.getPiece(),
-        ),
-      );
-    }
-    if (board.enPassantPawn) {
-      const enPassantX = board.enPassantPawn.x;
-      const enPassantY = board.enPassantPawn.y;
+      const captureLeft = board.getTile(x + dir, y - 1);
+      const captureRight = board.getTile(x + dir, y + 1);
       if (
-        enPassantX === this.x &&
-        (enPassantY === this.y - 1 || enPassantY === this.y + 1)
+        captureLeft &&
+        !captureLeft.isEmpty() &&
+        captureLeft.getPiece().color !== color
       ) {
-        this.moves.push(
-          new EnPassantMove(
-            this,
-            board.getTile(this.x, this.y),
-            board.getTile(this.x + dir, enPassantY),
-            board.getTile(enPassantX, enPassantY).getPiece(),
-          ),
-        );
+        if (x + dir === promotionRank) {
+          this.moves.push(
+            new PromotionMove(
+              this,
+              board.getTile(x, y),
+              captureLeft,
+              captureLeft.getPiece()
+            )
+          );
+        } else {
+          this.moves.push(
+            new AttackMove(
+              this,
+              board.getTile(x, y),
+              captureLeft,
+              captureLeft.getPiece(),
+            )
+          );
+        }
+        if (
+          captureRight &&
+          !captureRight.isEmpty() &&
+          captureRight.getPiece().color !== color
+        ) {
+          if (x + dir === promotionRank) {
+            this.moves.push(
+              new PromotionMove(
+                this,
+                board.getTile(x, y),
+                captureRight,
+                captureRight.getPiece()
+              )
+            );
+          } else {
+            this.moves.push(
+              new AttackMove(
+                this,
+                board.getTile(x, y),
+                captureRight,
+                captureRight.getPiece(),
+              )
+            );
+          }
+        }
+        if (board.enPassantPawn) {
+          const enPassantX = board.enPassantPawn.x;
+          const enPassantY = board.enPassantPawn.y;
+          if (
+            enPassantX === x &&
+            (enPassantY === y - 1 || enPassantY === y + 1)
+          ) {
+            this.moves.push(
+              new EnPassantMove(
+                this,
+                board.getTile(x, y),
+                board.getTile(x + dir, enPassantY),
+                board.getTile(enPassantX, enPassantY).getPiece(),
+              )
+            );
+          }
+        }
       }
     }
   }
 }
-
 export { Piece };
