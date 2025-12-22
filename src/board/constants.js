@@ -28,7 +28,8 @@ export const PIECES = {
 export const PRESETS = {
   standard: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   test1: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
-  test2: "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R",
+  test2: "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+  test3: "rnbq1bnr/pppp1kpp/4pp2/8/2P1P1Q1/3B4/PP1P1PPP/RNB1K1NR b KQ - 3 4"
 }
 
 export const FILES_BLACK = ["a", "b", "c", "d", "e", "f", "g", "h"];

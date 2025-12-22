@@ -173,6 +173,7 @@ export class Board {
   }
 
   createBoard(loadPosition) {
+
     for (let x = 0; x < 8; x++) {
       const row = [];
       for (let y = 0; y < 8; y++) {
@@ -180,23 +181,61 @@ export class Board {
       }
       this.tiles.push(row);
     }
+
     const splits = loadPosition.split(" ");
     const [rows, meta] = [splits[0].split("/"), splits.slice(1)];
-    for (let x = 0; x < rows.length; x++) {
-      for (let y = 0, yb = 0; y < rows[x].length; y++, yb++) {
-        const char = rows[x][y];
+
+    for (let i = 0; i < rows.length; i++) {
+      for (let j = 0, y = 0; j < rows[i].length; j++, y++) {
+        const char = rows[i][j];
         if (validateChar(char)) {
-          const newPiece = createPieceFromFENChar(char, x, yb);
-          console.log(newPiece);
-          this.tiles[x][yb].setPiece(newPiece);
+          const newPiece = createPieceFromFENChar(char, i, y);
+          this.tiles[i][y].setPiece(newPiece);
           this.pieces.push(newPiece);
-        } else if (!isNaN(rows[x][y])) {
-          const emptyCount = parseInt(rows[x][y]);
-          yb += emptyCount - 1;
+        } else if (!isNaN(rows[i][j])) {
+          const emptyCount = parseInt(rows[i][j]);
+          y += emptyCount - 1;
         }
       }
     }
+
+    const turn = meta[0];
+    this.currentTurn = turn === "w" ? "white" : "black";
+
+    const castlingRights = Array.from(meta[1]);
+    if (!castlingRights.includes("K")) {
+      const maybeWhiteRookKingSide = this.getTile(7, 7).getPiece();
+      if (maybeWhiteRookKingSide.type === "rook") {
+        maybeWhiteRookKingSide.isFirstMove = false;
+      }
+    }
+    if (!castlingRights.includes("Q")) {
+      const maybeWhiteRookQueenSide = this.getTile(7, 0).getPiece();
+      if (maybeWhiteRookQueenSide.type === "rook") {
+        maybeWhiteRookQueenSide.isFirstMove = false;
+      }
+    }
+    if (!castlingRights.includes("k")) {
+      const maybeBlackRookKingSide = this.getTile(0, 7).getPiece();
+      if (maybeBlackRookKingSide.type === "rook") {
+        maybeBlackRookKingSide.isFirstMove = false;
+      }
+    }
+    if (!castlingRights.includes("q")) {
+      const maybeBlackRookQueenSide = this.getTile(0, 0).getPiece();
+      if (maybeBlackRookQueenSide.type === "rook") {
+        maybeBlackRookQueenSide.isFirstMove = false;
+      }
+    }
+    const enPassantTarget = meta[2];
+    if (enPassantTarget !== "-") {
+      const file = enPassantTarget.charCodeAt(0) - "a".charCodeAt(0);
+      const rank = 8 - parseInt(enPassantTarget[1]);
+      const enPassantTile = this.getTile(rank, file);
+      const enPassantPiece = enPassantTile.getPiece();
+    }
   }
+
 
   drawBoard() {
     const boardElement = document.querySelector(".game-container");
