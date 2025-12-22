@@ -61,8 +61,6 @@ export class Player {
   }
 
   calculateCastleMoves(board) {
-    console.log("this.canCastleKingSide", this.canCastleKingSide);
-    console.log("this.canCastleQueenSide", this.canCastleQueenSide);
     const moves = [];
 
     if (!this.canCastleKingSide && !this.canCastleQueenSide) {
@@ -80,7 +78,6 @@ export class Player {
       for (let y = 3; y > 0; y--) {
         const tile = board.getTile(x, y);
         if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
-          console.log("Cannot castle queen side due to tile:", tile);
           canCastleQueen = false;
         }
       }
@@ -92,12 +89,10 @@ export class Player {
       for (let y = 5; y < 7; y++) {
         const tile = board.getTile(x, y);
         if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
-          console.log("Cannot castle king side due to tile:", tile);
           canCastleKing = false;
         }
       }
     }
-    console.log("canCastleKing", canCastleKing);
     if (canCastleKing) {
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
@@ -116,7 +111,6 @@ export class Player {
       );
     }
 
-    console.log("canCastleQueen", canCastleQueen);
     if (canCastleQueen) {
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
