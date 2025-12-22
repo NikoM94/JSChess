@@ -20,7 +20,6 @@ export class Player {
     this.king = this.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
     this.isInCheck = this.updateInCheck(board);
     this.isInCheckMate = this.updateInCheckMate();
-    this.updateCanCastle(board);
     this.moves = this.updateMoves(board);
     this.calculateCastleMoves(board);
   }
@@ -61,65 +60,45 @@ export class Player {
     return board.pieces.filter((piece) => piece.color === this.color);
   }
 
-  updateCanCastle(board) {
-    this.canCastleKingSide = true;
-    this.canCastleQueenSide = true;
-
-    if (!this.king.isFirstMove || this.isInCheck) {
-      this.canCastleKingSide = false;
-      this.canCastleQueenSide = false;
-      return;
-    }
-
-    const rookRank = this.color === "white" ? 7 : 0;
-    const maybeRookKingSide = board.getTile(rookRank, 7).getPiece();
-    const maybeRookQueenSide = board.getTile(rookRank, 0).getPiece();
-
-    if (maybeRookKingSide.type === "rook") {
-      if (maybeRookKingSide.isFirstMove === false) {
-        this.canCastleKingSide = false;
-      }
-    } else {
-      this.canCastleKingSide = false;
-    }
-
-    if (maybeRookQueenSide.type === "rook") {
-      if (maybeRookQueenSide.isFirstMove === false) {
-        this.canCastleQueenSide = false;
-      }
-    } else {
-      this.canCastleQueenSide = false;
-    }
+  calculateCastleMoves(board) {
+    console.log("this.canCastleKingSide", this.canCastleKingSide);
+    console.log("this.canCastleQueenSide", this.canCastleQueenSide);
+    const moves = [];
 
     if (!this.canCastleKingSide && !this.canCastleQueenSide) {
       return;
     }
 
+    if (this.isInCheck) {
+      return;
+    }
     let x = this.color === "white" ? 7 : 0;
+
     // queen side
-    let canCastleQueen = true;
-    for (let y = 3; y > 0; y--) {
-      const tile = board.getTile(x, y);
-      if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
-        canCastleQueen = false;
+    if (this.canCastleQueenSide) {
+      var canCastleQueen = true;
+      for (let y = 3; y > 0; y--) {
+        const tile = board.getTile(x, y);
+        if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
+          console.log("Cannot castle queen side due to tile:", tile);
+          canCastleQueen = false;
+        }
       }
     }
+
     // king side
-    let canCastleKing = true;
-    for (let y = 5; y < 7; y++) {
-      const tile = board.getTile(x, y);
-      if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
-        canCastleKing = false;
+    if (this.canCastleKingSide) {
+      var canCastleKing = true;
+      for (let y = 5; y < 7; y++) {
+        const tile = board.getTile(x, y);
+        if (!tile.isEmpty() || attacksOnTile(board, tile, this.color) > 0) {
+          console.log("Cannot castle king side due to tile:", tile);
+          canCastleKing = false;
+        }
       }
     }
-    this.canCastleKingSide = canCastleKing;
-    this.canCastleQueenSide = canCastleQueen;
-  }
-
-  calculateCastleMoves(board) {
-    const moves = [];
-
-    if (this.canCastleKingSide) {
+    console.log("canCastleKing", canCastleKing);
+    if (canCastleKing) {
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
       console.log(king);
@@ -137,7 +116,8 @@ export class Player {
       );
     }
 
-    if (this.canCastleQueenSide) {
+    console.log("canCastleQueen", canCastleQueen);
+    if (canCastleQueen) {
       let x = this.color === "white" ? 7 : 0;
       const king = this.king;
       const rookFrom = board.getTile(x, 0);

@@ -12,9 +12,24 @@ class Move {
 
     // Store the original isFirstMove state to restore later
     this.wasFirstMove = this.pieceMoved.isFirstMove;
+    this.canCastleKingSideBeforeMove = board.currentPlayer.canCastleKingSide;
+    this.canCastleQueenSideBeforeMove = board.currentPlayer.canCastleQueenSide;
     this.pieceMoved.isFirstMove = false;
     this.pieceMoved.x = tileTo.x;
     this.pieceMoved.y = tileTo.y;
+
+    if (this.pieceMoved.type === "king") {
+      board.currentPlayer.canCastleKingSide = false;
+      board.currentPlayer.canCastleQueenSide = false;
+    }
+
+    if (this.pieceMoved.type === "rook") {
+      if (tileFrom.y === 0) {
+        board.currentPlayer.canCastleQueenSide = false;
+      } else if (tileFrom.y === 7) {
+        board.currentPlayer.canCastleKingSide = false;
+      }
+    }
 
     tileTo.setPiece(this.pieceMoved);
     tileFrom.setPiece(new Piece("none", "none", "", tileFrom.x, tileFrom.y));
@@ -30,6 +45,9 @@ class Move {
 
     // Restore the isFirstMove state
     this.pieceMoved.isFirstMove = this.wasFirstMove;
+
+    board.currentPlayer.canCastleKingSide = this.canCastleKingSideBeforeMove;
+    board.currentPlayer.canCastleQueenSide = this.canCastleQueenSideBeforeMove;
 
     tileFrom.setPiece(this.pieceMoved);
     if (this.type !== "attack" && this.type !== "enPassant") {
