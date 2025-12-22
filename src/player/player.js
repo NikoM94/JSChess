@@ -1,5 +1,4 @@
 import { attacksOnTile } from "../utils/boardutils.js";
-import { Board } from "../board/board.js";
 import { CastleMove } from "../move/move.js";
 
 export class Player {

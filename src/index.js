@@ -1,2 +1,3 @@
 import { Board } from "./board/board.js";
-let b = new Board();
+import { PRESETS } from "./board/constants.js";
+let b = new Board(PRESETS.standard);

@@ -1,4 +1,6 @@
 import { FILES_WHITE, RANKS_WHITE, FEN_TYPES } from "../board/constants.js";
+import { Piece } from "../piece/piece.js";
+import { Tile } from "../board/tile.js";
 
 export function xyToChessCoordinate(x, y) {
   return FILES_WHITE[y] + RANKS_WHITE[x];
@@ -35,22 +37,6 @@ export function attacksOnTile(board, tile, color, options = {}) {
   return attacks;
 }
 
-export function checkTurnAndSelectedPiece(board, targetElement) {
-  return (
-    targetElement.getAttribute("piece-color") !== board.currentTurn &&
-    !board.selectedPiece
-  );
-}
-
-export function hasMoves(selectedPiece, x, y) {
-  return (
-    selectedPiece &&
-    selectedPiece.moves.some((move) => {
-      return move.toTile.x === x && move.toTile.y === y;
-    })
-  );
-}
-
 export function loadFromFEN(board, fen) {
   board.pieces = [];
   board.tiles = [];
@@ -70,16 +56,15 @@ export function loadFromFEN(board, fen) {
         const type = FEN_TYPES[char.toLowerCase()];
         const x = rows.indexOf(row);
         const y = row.indexOf(char);
-        board.pieces.push();
+        const newPiece = createPieceFromFENChar(char, x, y);
+        board.tiles[x][y].setPiece(newPiece);
+        board.pieces.push(newPiece);
         //todo
       } else if (!isNaN(char)) {
         const emptyCount = parseInt(char);
         const x = rows.indexOf(row);
         const startY = row.indexOf(char);
-        for (let i = 0; i < emptyCount; i++) {
-          const y = startY + i;
-          board.tiles[x][y] = createEmptyTile(x, y);
-        }
+
       } else {
         throw new Error(`Invalid FEN character: ${char}`);
       }
@@ -114,22 +99,22 @@ function boardToFEN(board) {
   return fen;
 }
 
-function validateChar(char) {
+export function validateChar(char) {
   return /[prnbqkPRNBQK]/.test(char);
 }
 
-function createPieceFromFENChar(char, x, y) {
+export function createPieceFromFENChar(char, x, y) {
   const color = char === char.toUpperCase() ? "white" : "black";
   const type = FEN_TYPES[char.toLowerCase()];
   const imageSrc = `../../assets/${color}_${type}.svg`;
   return new Piece(type, color, imageSrc, x, y);
 }
 
-function createEmptyTile(x, y) {
+export function createEmptyTile(x, y) {
   return new Tile(
     x,
     y,
     (x + y + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0",
-    new Piece("none", "", "", x, y),
+    new Piece("none", "none", "", x, y),
   );
 }

@@ -1,11 +1,12 @@
 import { Tile } from "./tile.js";
-import { ROWS, COLS, BOARD_PRESET, COLORS } from "./constants.js";
+import { ROWS, COLS, BOARD_PRESET, COLORS, PRESETS, FEN_TYPES } from "./constants.js";
 import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
 import {
   validCoordinate,
-  hasMoves,
-  checkTurnAndSelectedPiece,
+  createPieceFromFENChar,
+  validateChar,
+  createEmptyTile,
 } from "../utils/boardutils.js";
 import { BoardLogger } from "../utils/logger.js";
 // TODO: checkmate, stalemate, draw, move history,
@@ -13,10 +14,10 @@ import { BoardLogger } from "../utils/logger.js";
 // Unit tests for board
 
 export class Board {
-  constructor() {
+  constructor(loadPosition = PRESETS.standard) {
     this.tiles = [];
     this.pieces = [];
-    this.createBoard();
+    this.createBoard(loadPosition);
     this.drawBoard();
     this.selectedPiece = null;
     this.clickedTile = null;
@@ -95,7 +96,6 @@ export class Board {
     newTileElement.dataset.pieceType = this.selectedPiece.type;
     newTileElement.dataset.pieceColor = this.selectedPiece.color;
     const oldTileElement = document.getElementById(`tile_${oldX}_${oldY}`);
-    console.log(oldTileElement);
     oldTileElement.style.backgroundImage = "";
     oldTileElement.dataset.pieceColor = "none";
     oldTileElement.dataset.pieceType = "none";
@@ -145,8 +145,6 @@ export class Board {
         const rookToElement = document.getElementById(
           `tile_${move.castleRookTo.x}_${move.castleRookTo.y}`,
         );
-        console.log("Rook from: ", rookFromElement);
-        console.log("Rook to: ", rookToElement);
         rookToElement.style.backgroundImage = `url(${move.rook.imageSrc})`;
         rookFromElement.style.backgroundImage = "";
         rookToElement.dataset.pieceType = move.rook.type;
@@ -174,29 +172,29 @@ export class Board {
     this.logger.printBoard(this);
   }
 
-  createBoard() {
-    for (let i = 0; i < ROWS; i++) {
-      let row = [];
-      for (let j = 0; j < COLS; j++) {
-        let color = (i + j + 2) % 2 === 0 ? "#E0D5EA" : "#957AB0";
-        const pieceType = BOARD_PRESET.standard[i][j].split("_")[0];
-        const pieceColor = BOARD_PRESET.standard[i][j].split("_")[1];
-        if (pieceType === "none") {
-          const piece = new Piece(pieceType, pieceColor, "", i, j);
-          row.push(new Tile(i, j, color, piece));
-        } else {
-          const piece = new Piece(
-            pieceType,
-            pieceColor,
-            `../../assets/${pieceColor}_${pieceType}.svg`,
-            i,
-            j,
-          );
-          row.push(new Tile(i, j, color, piece));
-          this.pieces.push(piece);
-        }
+  createBoard(loadPosition) {
+    for (let x = 0; x < 8; x++) {
+      const row = [];
+      for (let y = 0; y < 8; y++) {
+        row.push(createEmptyTile(x, y));
       }
       this.tiles.push(row);
+    }
+    const splits = loadPosition.split(" ");
+    const [rows, meta] = [splits[0].split("/"), splits.slice(1)];
+    for (let x = 0; x < rows.length; x++) {
+      for (let y = 0, yb = 0; y < rows[x].length; y++, yb++) {
+        const char = rows[x][y];
+        if (validateChar(char)) {
+          const newPiece = createPieceFromFENChar(char, x, yb);
+          console.log(newPiece);
+          this.tiles[x][yb].setPiece(newPiece);
+          this.pieces.push(newPiece);
+        } else if (!isNaN(rows[x][y])) {
+          const emptyCount = parseInt(rows[x][y]);
+          yb += emptyCount - 1;
+        }
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-class Tile {
+export class Tile {
   constructor(x, y, color, piece = null) {
     this.x = x;
     this.y = y;
@@ -15,18 +15,14 @@ class Tile {
 
   setPiece(piece) {
     this.piece = piece;
-  }
-
-  removePiece() {
-    this.piece = null;
+    this.backgroundImage =
+      this.piece && this.piece.type !== "none"
+        ? `url(${this.piece.imageSrc})`
+        : "";
   }
 
   isEmpty() {
     return this.piece === null || this.piece.type === "none";
-  }
-
-  getCoordinates() {
-    return { x: this.x, y: this.y };
   }
 
   drawTile() {
@@ -42,5 +38,3 @@ class Tile {
     return tileElement;
   }
 }
-
-export { Tile };

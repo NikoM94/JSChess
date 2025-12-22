@@ -9,7 +9,7 @@ export const COLORS = {
 export const FEN_TYPES = {
   p: "pawn",
   r: "rook",
-  k: "knight",
+  n: "knight",
   b: "bishop",
   q: "queen",
   k: "king",
@@ -24,6 +24,12 @@ export const PIECES = {
   queen: "queen",
   king: "king",
 };
+
+export const PRESETS = {
+  standard: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  test1: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+  test2: "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R",
+}
 
 export const FILES_BLACK = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export const RANKS_BLACK = ["1", "2", "3", "4", "5", "6", "7", "8"];
