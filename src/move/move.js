@@ -181,14 +181,39 @@ export class PromotionMove extends Move {
     // Update the board's pieces list
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceMoved);
     board.pieces.push(promotedPiece);
+    // Store reference to the promoted piece for unmakeMove
+    this.promotedPiece = promotedPiece;
   }
 
   unmakeMove(board) {
-    super.unmakeMove(board);
+    let tileFrom = board.getTile(this.fromTile.x, this.fromTile.y);
+    let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+
+    // Restore the original pawn's position
+    this.pieceMoved.x = tileFrom.x;
+    this.pieceMoved.y = tileFrom.y;
+
+    // Restore the isFirstMove state
+    this.pieceMoved.isFirstMove = this.wasFirstMove;
+
+    // Restore castling rights
+    board.currentPlayer.canCastleKingSide = this.canCastleKingSideBeforeMove;
+    board.currentPlayer.canCastleQueenSide = this.canCastleQueenSideBeforeMove;
+
+    // Put the pawn back on its original tile
+    tileFrom.setPiece(this.pieceMoved);
+
+    // Remove the promoted piece from the board and add back the original pawn
+    board.pieces = board.pieces.filter((piece) => piece !== this.promotedPiece);
+    board.pieces.push(this.pieceMoved);
+
     if (this.pieceCaptured) {
-      let tileTo = board.getTile(this.toTile.x, this.toTile.y);
+      // Restore the captured piece
       board.pieces.push(this.pieceCaptured);
       tileTo.setPiece(this.pieceCaptured);
+    } else {
+      // Clear the destination tile
+      tileTo.setPiece(new Piece("none", "none", "", tileTo.x, tileTo.y));
     }
   }
 }
