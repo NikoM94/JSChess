@@ -1,4 +1,4 @@
-import { attacksOnTile } from "../utils/boardutils.js";
+import { attacksOnTile, copyBoard, copyMoveForBoard } from "../utils/boardutils.js";
 import { CastleMove } from "../move/move.js";
 
 export class Player {
@@ -29,7 +29,7 @@ export class Player {
       return m.pieceMoved.color === this.color;
     });
     // return thisMoves;
-    return this.filterMoves(thisMoves, board);
+    return this.filterMovesImproved(thisMoves, board);
   }
 
   filterMoves(moveList, board) {
@@ -46,6 +46,50 @@ export class Player {
       }
       move.unmakeMove(board);
     }
+    return legalMoves;
+  }
+
+  /**
+   * Improved version of filterMoves that uses a copied board to avoid mutating state.
+   * This creates a deep copy of the board, remaps the move to work with the copy,
+   * executes the move on the copy, and checks for attacks on the king.
+   * @param {Array} moveList - List of moves to filter
+   * @param {Object} board - The original board
+   * @returns {Array} List of legal moves that don't leave the king in check
+   */
+  filterMovesImproved(moveList, board) {
+    const legalMoves = [];
+
+    for (const move of moveList) {
+      // Skip moves that capture the king (these should never be valid)
+      if (move.type === "attack" && move.pieceCaptured.type === "king") {
+        continue;
+      }
+
+      // Create a fresh copy of the board for each move validation
+      const { copiedBoard, pieceMap } = copyBoard(board);
+
+      // Create a copy of the move that works with the copied board
+      const copiedMove = copyMoveForBoard(move, copiedBoard, pieceMap);
+
+      // Execute the move on the copied board
+      copiedMove.makeMove(copiedBoard);
+
+      // Find the king on the copied board after the move
+      const copiedKing = pieceMap.get(this.king);
+      const kingTileOnCopy = copiedBoard.getTile(copiedKing.x, copiedKing.y);
+
+      // Check if the king is under attack on the copied board
+      const noAttacksOnKing = attacksOnTile(copiedBoard, kingTileOnCopy, this.color) === 0;
+
+      if (noAttacksOnKing) {
+        // If the move is legal, add the ORIGINAL move (not the copy) to the list
+        legalMoves.push(move);
+      }
+
+      // No need to unmake the move - we're discarding the copied board
+    }
+
     return legalMoves;
   }
 
