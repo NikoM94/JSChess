@@ -16,14 +16,14 @@ import {
 } from "../move/move.js";
 
 class Piece {
-  constructor(type, color, imageSrc, x, y) {
+  constructor(type, color, imageSrc, x, y, isFirstMove = true) {
     this.type = PIECES[type];
     this.color = COLORS[color];
     this.imageSrc = imageSrc;
     this.x = x;
     this.y = y;
     this.moves = [];
-    this.isFirstMove = true;
+    this.isFirstMove = isFirstMove;
   }
 
   calculateMoves(board, options = {}) {

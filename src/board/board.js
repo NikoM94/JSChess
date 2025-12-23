@@ -1,5 +1,12 @@
 import { Tile } from "./tile.js";
-import { ROWS, COLS, BOARD_PRESET, COLORS, PRESETS, FEN_TYPES } from "./constants.js";
+import {
+  ROWS,
+  COLS,
+  BOARD_PRESET,
+  COLORS,
+  PRESETS,
+  FEN_TYPES,
+} from "./constants.js";
 import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
 import {
@@ -18,7 +25,6 @@ export class Board {
     this.selectedPiece = null;
     this.clickedTile = null;
     this.enPassantPawn = null;
-    this.turn = COLORS.white;
     this.moves = this.calculateAllMoves();
     this.whitePlayer = new Player(this, COLORS["white"]);
     this.blackPlayer = new Player(this, COLORS["black"]);
@@ -28,7 +34,6 @@ export class Board {
     this.logger = new BoardLogger(this);
     this.logger.printBoard(this);
     this.turns = 0;
-    this.drawBoard();
   }
 
   getTile(x, y) {
@@ -59,7 +64,7 @@ export class Board {
       this.drawBoard();
       this.logger.printBoard(this);
     });
-  };
+  }
 
   onClickTile(event) {
     console.log("Tile clicked");
@@ -269,5 +274,9 @@ export class Board {
         boardElement.appendChild(tileElement);
       }
     }
+  }
+
+  getCopy() {
+    return structuredClone(this);
   }
 }

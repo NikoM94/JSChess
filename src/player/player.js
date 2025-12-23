@@ -17,7 +17,9 @@ export class Player {
 
   updatePlayer(board) {
     this.pieces = this.updatePieces(board);
-    this.king = this.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
+    this.king = this.pieces.find(
+      (piece) => piece.type === "king" && piece.color === this.color,
+    );
     this.isInCheck = this.updateInCheck(board);
     this.isInCheckMate = this.updateInCheckMate();
     this.moves = this.updateMoves(board);
@@ -28,8 +30,20 @@ export class Player {
     let thisMoves = board.moves.filter((m) => {
       return m.pieceMoved.color === this.color;
     });
-    // return thisMoves;
+    console.log(this.filterMovesImproved(thisMoves, board));
     return this.filterMoves(thisMoves, board);
+  }
+
+  filterMovesImproved(moveList, board) {
+    const legalMoves = [];
+    let bCopy = structuredClone(board);
+    console.log(bCopy);
+    for (const move of moveList) {
+      if (move.type === "attack" && move.pieceCaptured.type === "king") {
+        continue;
+      }
+      tryMove(bCopy);
+    }
   }
 
   filterMoves(moveList, board) {
@@ -40,7 +54,8 @@ export class Player {
       }
       move.makeMove(board);
       const currentKingTile = board.tiles[this.king.x][this.king.y];
-      const noAttacksOnKing = attacksOnTile(board, currentKingTile, this.color) == 0;
+      const noAttacksOnKing =
+        attacksOnTile(board, currentKingTile, this.color) == 0;
       if (noAttacksOnKing) {
         legalMoves.push(move);
       }
@@ -105,7 +120,7 @@ export class Player {
           rookFrom,
           rookTo,
           rookFrom.getPiece(),
-        )
+        ),
       );
     }
 
@@ -122,7 +137,7 @@ export class Player {
           rookFrom,
           rookTo,
           rookFrom.getPiece(),
-        )
+        ),
       );
     }
     this.moves.push(...moves);
