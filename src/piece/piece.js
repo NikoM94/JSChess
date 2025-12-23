@@ -220,8 +220,8 @@ class Piece {
             this,
             board.getTile(x, y),
             captureLeft,
-            captureLeft.getPiece()
-          )
+            captureLeft.getPiece(),
+          ),
         );
       } else {
         this.moves.push(
@@ -230,7 +230,7 @@ class Piece {
             board.getTile(x, y),
             captureLeft,
             captureLeft.getPiece(),
-          )
+          ),
         );
       }
     }
@@ -246,8 +246,8 @@ class Piece {
             this,
             board.getTile(x, y),
             captureRight,
-            captureRight.getPiece()
-          )
+            captureRight.getPiece(),
+          ),
         );
       } else {
         this.moves.push(
@@ -256,7 +256,7 @@ class Piece {
             board.getTile(x, y),
             captureRight,
             captureRight.getPiece(),
-          )
+          ),
         );
       }
     }
@@ -265,17 +265,14 @@ class Piece {
     if (board.enPassantPawn) {
       const enPassantX = board.enPassantPawn.x;
       const enPassantY = board.enPassantPawn.y;
-      if (
-        enPassantX === x &&
-        (enPassantY === y - 1 || enPassantY === y + 1)
-      ) {
+      if (enPassantX === x && (enPassantY === y - 1 || enPassantY === y + 1)) {
         this.moves.push(
           new EnPassantMove(
             this,
             board.getTile(x, y),
             board.getTile(x + dir, enPassantY),
             board.getTile(enPassantX, enPassantY).getPiece(),
-          )
+          ),
         );
       }
     }

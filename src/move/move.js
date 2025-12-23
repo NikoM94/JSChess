@@ -172,9 +172,9 @@ export class PromotionMove extends Move {
     const promotedPiece = new Piece(
       "queen",
       this.pieceMoved.color,
-      `url(${this.pieceMoved.color}_queen.svg)`,
+      `../../assets/${this.pieceMoved.color}_queen.svg`,
       tileTo.x,
-      tileTo.y
+      tileTo.y,
     );
     tileTo.setPiece(promotedPiece);
     tileTo.drawTile();
