@@ -21,7 +21,7 @@ export function copyBoard(board) {
     pieces: [],
     moves: [],
     enPassantPawn: null,
-    currentTurn: board.currentTurn,
+    currentTurn: board.currentTurn || null,
     currentPlayer: board.currentPlayer ? {
       canCastleKingSide: board.currentPlayer.canCastleKingSide,
       canCastleQueenSide: board.currentPlayer.canCastleQueenSide,
@@ -52,7 +52,6 @@ export function copyBoard(board) {
           oldPiece.y
         );
         newPiece.isFirstMove = oldPiece.isFirstMove;
-        newPiece.moves = []; // Fresh moves array - will be recalculated
         
         // Add to pieceMap and pieces array
         pieceMap.set(oldPiece, newPiece);
