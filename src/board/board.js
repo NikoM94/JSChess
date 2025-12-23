@@ -11,7 +11,7 @@ import {
 import { BoardLogger } from "../utils/logger.js";
 
 export class Board {
-  constructor(loadPosition = "") {
+  constructor() {
     this.tiles = [];
     this.pieces = [];
     this.createStartingPosition();
@@ -28,7 +28,6 @@ export class Board {
     this.logger = new BoardLogger(this);
     this.logger.printBoard(this);
     this.turns = 0;
-    this.loadPositionFromFEN(loadPosition);
     this.drawBoard();
   }
 
@@ -48,9 +47,22 @@ export class Board {
   addListeners() {
     const boardElement = document.querySelector(".game-container");
     boardElement.addEventListener("click", this.onClickTile.bind(this));
-  }
+    const fenButton = document.getElementById("load-fen-button");
+    fenButton.addEventListener("click", () => {
+      const fenInput = document.getElementById("fen-input").value;
+      this.loadPositionFromFEN(fenInput);
+      boardElement.innerHTML = "";
+      this.moves = this.calculateAllMoves();
+      this.whitePlayer.updatePlayer(this);
+      this.blackPlayer.updatePlayer(this);
+      this.capturedPieces = [];
+      this.drawBoard();
+      this.logger.printBoard(this);
+    });
+  };
 
   onClickTile(event) {
+    console.log("Tile clicked");
     const targetElement = event.target;
     if (!targetElement.classList.contains("tile")) return;
     const [newX, newY] = [
@@ -243,6 +255,5 @@ export class Board {
         boardElement.appendChild(tileElement);
       }
     }
-    this.addListeners();
   }
 }

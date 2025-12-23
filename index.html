@@ -1,32 +1,34 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title></title>
-    <link href="css/index.css" rel="stylesheet" />
-    <link href="css/board.css" rel="stylesheet" />
-  </head>
-  <body>
-    <span><div class="game-container"></div></span>
-    <!-- dev tools interface for printing internal game states in console -->
-    <button class="dev-button" type="submit">dev tools</button>
-    <div class="dev-interface-container">
-      <label for="show-board">board</label>
-      <input type="radio" id="show-board" name="show-board" />
-      <label for="show-moves-white">white moves</label>
-      <input type="radio" id="show-moves-white" name="show-moves-white" />
-      <label for="show-moves-black">black moves</label>
-      <input type="radio" id="show-moves-black" name="show-moves-black" />
-      <label for="show-captured-pieces">captured pieces</label>
-      <input
-        type="radio"
-        id="show-captured-pieces"
-        name="show-captured-pieces"
-      />
-    </div>
-  </body>
-  <script type="module" src="src/index.js"></script>
-  <script type="module" src="src/board/board.js"></script>
-  <script type="module" src="src/board/tile.js"></script>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <link href="css/index.css" rel="stylesheet" />
+  <link href="css/board.css" rel="stylesheet" />
+</head>
+
+<body>
+  <span>
+    <div class="game-container"></div>
+  </span>
+  <!-- dev tools interface for printing internal game states in console -->
+  <button class="dev-button" type="submit">dev tools</button>
+  <div class="dev-interface-container">
+    <label for="show-board">board</label>
+    <input type="radio" id="show-board" name="show-board" />
+    <label for="show-moves-white">white moves</label>
+    <input type="radio" id="show-moves-white" name="show-moves-white" />
+    <label for="show-moves-black">black moves</label>
+    <input type="radio" id="show-moves-black" name="show-moves-black" />
+    <label for="show-captured-pieces">captured pieces</label>
+    <input type="radio" id="show-captured-pieces" name="show-captured-pieces" /><br />
+    <input type="text" id="fen-input" placeholder="enter FEN string" />
+    <button class="dev-button" id="load-fen-button" type="submit">load FEN</button </div>
+</body>
+<script type="module" src="src/index.js"></script>
+<script type="module" src="src/board/board.js"></script>
+<script type="module" src="src/board/tile.js"></script>
+
 </html>
