@@ -1,4 +1,5 @@
-import { attacksOnTile, copyBoard, copyMoveForBoard } from "../utils/boardutils.js";
+import { attacksOnTile } from "../utils/boardutils.js";
+import { copyBoard, findCopiedMove } from "../board/boardfactory.js";
 import { CastleMove } from "../move/move.js";
 
 export class Player {
@@ -51,8 +52,14 @@ export class Player {
 
   /**
    * Improved version of filterMoves that uses a copied board to avoid mutating state.
-   * This creates a deep copy of the board, remaps the move to work with the copy,
+   * This creates a deep copy of the board, finds the matching move in the copy,
    * executes the move on the copy, and checks for attacks on the king.
+   * 
+   * Key fixes for stale references:
+   * 1. copyBoard recalculates all moves AFTER pieces are placed
+   * 2. findCopiedMove matches by fromTile, toTile, AND move type
+   * 3. The copied board's move references the copied pieces/tiles
+   * 
    * @param {Array} moveList - List of moves to filter
    * @param {Object} board - The original board
    * @returns {Array} List of legal moves that don't leave the king in check
@@ -67,10 +74,17 @@ export class Player {
       }
 
       // Create a fresh copy of the board for each move validation
+      // The copy has fresh moves calculated that reference the copied pieces/tiles
       const { copiedBoard, pieceMap } = copyBoard(board);
 
-      // Create a copy of the move that works with the copied board
-      const copiedMove = copyMoveForBoard(move, copiedBoard, pieceMap);
+      // Find the corresponding move in the copied board's move list
+      // This move already references the copied board's pieces and tiles
+      const copiedMove = findCopiedMove(move, copiedBoard);
+
+      if (!copiedMove) {
+        // Move not found in copied board - this shouldn't happen with valid moves
+        continue;
+      }
 
       // Execute the move on the copied board
       copiedMove.makeMove(copiedBoard);

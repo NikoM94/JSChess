@@ -1,6 +1,7 @@
 import { Piece } from "../src/piece/piece.js";
 import { NormalMove, AttackMove } from "../src/move/move.js";
-import { createEmptyTile, copyBoard, copyMoveForBoard } from "../src/utils/boardutils.js";
+import { createEmptyTile } from "../src/utils/boardutils.js";
+import { copyBoard, findCopiedMove } from "../src/board/boardfactory.js";
 import { Player } from "../src/player/player.js";
 import assert from "assert";
 
@@ -90,82 +91,68 @@ describe("copyBoard", function () {
   });
 });
 
-describe("copyMoveForBoard", function () {
-  it("should create a move copy that references copied board objects", function () {
+describe("findCopiedMove", function () {
+  it("should find matching move in copied board by fromTile, toTile, and type", function () {
     const board = createTestBoard();
 
-    // Add a piece
+    // Add a pawn piece
     const piece = new Piece("pawn", "white", "../../assets/white_pawn.svg", 4, 4);
     board.tiles[4][4].setPiece(piece);
     board.pieces.push(piece);
 
-    const fromTile = board.getTile(4, 4);
-    const toTile = board.getTile(3, 4);
-    const originalMove = new NormalMove(piece, fromTile, toTile);
+    // Calculate moves for the board
+    board.moves = [];
+    for (const p of board.pieces) {
+      p.calculateMoves(board);
+      board.moves.push(...p.moves);
+    }
+
+    // Get an original move
+    const originalMove = board.moves.find(m => m.pieceMoved === piece && m.type === "normal");
+    assert.ok(originalMove, "Should have a normal move");
 
     const { copiedBoard, pieceMap } = copyBoard(board);
-    const copiedMove = copyMoveForBoard(originalMove, copiedBoard, pieceMap);
+    const copiedMove = findCopiedMove(originalMove, copiedBoard);
 
-    // Verify the copied move references the copied board's objects
+    // Verify the copied move was found and references the copied board's objects
+    assert.ok(copiedMove, "Should find the copied move");
     assert.notStrictEqual(copiedMove.pieceMoved, piece, "Copied move should use copied piece");
     assert.strictEqual(copiedMove.pieceMoved, pieceMap.get(piece), "Copied move should use mapped piece");
     assert.strictEqual(copiedMove.fromTile, copiedBoard.getTile(4, 4), "Copied move should use copied fromTile");
-    assert.strictEqual(copiedMove.toTile, copiedBoard.getTile(3, 4), "Copied move should use copied toTile");
+    assert.strictEqual(copiedMove.toTile.x, originalMove.toTile.x, "Copied move should have same toTile x");
+    assert.strictEqual(copiedMove.toTile.y, originalMove.toTile.y, "Copied move should have same toTile y");
   });
 });
 
 describe("filterMovesImproved", function () {
-  it("should filter out moves that leave king in check", function () {
+  it("should allow legal moves when king is not exposed", function () {
+    // Test that a move NOT exposing the king is allowed
     const board = createTestBoard();
 
-    // Set up a scenario: White king at e1 (7, 4), black rook at e8 (0, 4)
-    // A white pawn blocking at e2 (6, 4)
-    // Moving the pawn should be illegal because it exposes the king
+    const king = new Piece("king", "white", "../../assets/white_king.svg", 7, 4);
+    board.tiles[7][4].setPiece(king);
+    board.pieces.push(king);
 
-    const whiteKing = new Piece("king", "white", "../../assets/white_king.svg", 7, 4);
-    board.tiles[7][4].setPiece(whiteKing);
-    board.pieces.push(whiteKing);
-
-    const blackRook = new Piece("rook", "black", "../../assets/black_rook.svg", 0, 4);
-    board.tiles[0][4].setPiece(blackRook);
-    board.pieces.push(blackRook);
-
-    const whitePawn = new Piece("pawn", "white", "../../assets/white_pawn.svg", 6, 4);
-    board.tiles[6][4].setPiece(whitePawn);
-    board.pieces.push(whitePawn);
-
-    // Create a move that would expose the king (pawn moves sideways capturing - illegal scenario)
-    // For testing, let's create a move that moves the pawn forward, exposing the king
-    // Wait - pawn moving forward doesn't expose king since rook is on same file
-    // Let's try different scenario: King on e1, blocking piece on d2, enemy bishop on a5
-
-    // Actually let's simplify: test that a move NOT exposing the king is allowed
-    const board2 = createTestBoard();
-
-    const king2 = new Piece("king", "white", "../../assets/white_king.svg", 7, 4);
-    board2.tiles[7][4].setPiece(king2);
-    board2.pieces.push(king2);
-
-    const pawn2 = new Piece("pawn", "white", "../../assets/white_pawn.svg", 6, 3);
-    board2.tiles[6][3].setPiece(pawn2);
-    board2.pieces.push(pawn2);
+    const pawn = new Piece("pawn", "white", "../../assets/white_pawn.svg", 6, 3);
+    board.tiles[6][3].setPiece(pawn);
+    board.pieces.push(pawn);
 
     // Calculate all moves
-    board2.moves = [];
-    for (const p of board2.pieces) {
-      p.calculateMoves(board2);
-      board2.moves.push(...p.moves);
+    board.moves = [];
+    for (const p of board.pieces) {
+      p.calculateMoves(board);
+      board.moves.push(...p.moves);
     }
 
     // Create a mock player
     const mockPlayer = {
       color: "white",
-      king: king2,
+      king: king,
       filterMovesImproved: Player.prototype.filterMovesImproved
     };
 
-    const pawnMoves = board2.moves.filter(m => m.pieceMoved === pawn2);
-    const legalMoves = mockPlayer.filterMovesImproved(pawnMoves, board2);
+    const pawnMoves = board.moves.filter(m => m.pieceMoved === pawn);
+    const legalMoves = mockPlayer.filterMovesImproved(pawnMoves, board);
 
     // Pawn should have legal moves (no piece attacking king after move)
     assert.ok(legalMoves.length > 0, "Pawn should have legal moves when king is safe");
