@@ -197,7 +197,6 @@ class Piece {
   }
 
   calculatePawnMoves(board) {
-    // TODO: promotion
     const dir = this.color === "white" ? -1 : 1;
     const x = this.x;
     const y = this.y;
@@ -206,6 +205,8 @@ class Piece {
     const destination = board.getTile(x + dir, y);
     const startRow = color === "white" ? 6 : 1;
     const promotionRank = color === "white" ? 0 : 7;
+
+    // Forward moves (only if destination is empty)
     if (destination && destination.isEmpty()) {
       if (x + dir === promotionRank) {
         this.moves.push(
@@ -221,6 +222,7 @@ class Piece {
           new NormalMove(this, board.getTile(x, y), destination),
         );
       }
+      // Double step from starting position
       if (x === startRow) {
         const doubleStep = board.getTile(x + 2 * dir, y);
         if (doubleStep && doubleStep.isEmpty()) {
@@ -229,74 +231,80 @@ class Piece {
           );
         }
       }
-      const captureLeft = board.getTile(x + dir, y - 1);
-      const captureRight = board.getTile(x + dir, y + 1);
+    }
+
+    // Capture moves (independent of forward move availability)
+    const captureLeft = board.getTile(x + dir, y - 1);
+    const captureRight = board.getTile(x + dir, y + 1);
+
+    if (
+      captureLeft &&
+      !captureLeft.isEmpty() &&
+      captureLeft.getPiece().color !== color
+    ) {
+      if (x + dir === promotionRank) {
+        this.moves.push(
+          new PromotionMove(
+            this,
+            board.getTile(x, y),
+            captureLeft,
+            captureLeft.getPiece()
+          )
+        );
+      } else {
+        this.moves.push(
+          new AttackMove(
+            this,
+            board.getTile(x, y),
+            captureLeft,
+            captureLeft.getPiece(),
+          )
+        );
+      }
+    }
+
+    if (
+      captureRight &&
+      !captureRight.isEmpty() &&
+      captureRight.getPiece().color !== color
+    ) {
+      if (x + dir === promotionRank) {
+        this.moves.push(
+          new PromotionMove(
+            this,
+            board.getTile(x, y),
+            captureRight,
+            captureRight.getPiece()
+          )
+        );
+      } else {
+        this.moves.push(
+          new AttackMove(
+            this,
+            board.getTile(x, y),
+            captureRight,
+            captureRight.getPiece(),
+          )
+        );
+      }
+    }
+
+    // En passant (independent of other captures)
+    if (board.enPassantPawn) {
+      const enPassantX = board.enPassantPawn.x;
+      const enPassantY = board.enPassantPawn.y;
       if (
-        captureLeft &&
-        !captureLeft.isEmpty() &&
-        captureLeft.getPiece().color !== color
+        enPassantX === x &&
+        (enPassantY === y - 1 || enPassantY === y + 1)
       ) {
-        if (x + dir === promotionRank) {
-          this.moves.push(
-            new PromotionMove(
-              this,
-              board.getTile(x, y),
-              captureLeft,
-              captureLeft.getPiece()
-            )
-          );
-        } else {
-          this.moves.push(
-            new AttackMove(
-              this,
-              board.getTile(x, y),
-              captureLeft,
-              captureLeft.getPiece(),
-            )
-          );
-        }
-        if (
-          captureRight &&
-          !captureRight.isEmpty() &&
-          captureRight.getPiece().color !== color
-        ) {
-          if (x + dir === promotionRank) {
-            this.moves.push(
-              new PromotionMove(
-                this,
-                board.getTile(x, y),
-                captureRight,
-                captureRight.getPiece()
-              )
-            );
-          } else {
-            this.moves.push(
-              new AttackMove(
-                this,
-                board.getTile(x, y),
-                captureRight,
-                captureRight.getPiece(),
-              )
-            );
-          }
-        }
-        if (board.enPassantPawn) {
-          const enPassantX = board.enPassantPawn.x;
-          const enPassantY = board.enPassantPawn.y;
-          if (
-            enPassantX === x &&
-            (enPassantY === y - 1 || enPassantY === y + 1)
-          ) {
-            this.moves.push(
-              new EnPassantMove(
-                this,
-                board.getTile(x, y),
-                board.getTile(x + dir, enPassantY),
-                board.getTile(enPassantX, enPassantY).getPiece(),
-              )
-            );
-          }
-        }
+        this.moves.push(
+          new EnPassantMove(
+            this,
+            board.getTile(x, y),
+            board.getTile(x + dir, enPassantY),
+            board.getTile(enPassantX, enPassantY).getPiece(),
+          )
+        );
       }
     }
   }
