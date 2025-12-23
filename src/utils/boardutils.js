@@ -64,7 +64,6 @@ export function loadFromFEN(board, fen) {
         const emptyCount = parseInt(char);
         const x = rows.indexOf(row);
         const startY = row.indexOf(char);
-
       } else {
         throw new Error(`Invalid FEN character: ${char}`);
       }

@@ -32,7 +32,6 @@ export class Board {
     this.currentPlayer = this.whitePlayer;
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
-    this.logger.printBoard(this);
     this.turns = 0;
   }
 

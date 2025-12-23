@@ -7,7 +7,7 @@ export function copyBoard(board) {
   let newBoard = new Board();
 
   for (let x = 0; x < newBoard.tiles.length; x++) {
-    for (let y = 0; y < newBoard[x].length; y++) {
+    for (let y = 0; y < newBoard.tiles[x].length; y++) {
       let oldTile = board.tiles[x][y];
       let oldPiece = oldTile.piece;
 
@@ -53,5 +53,8 @@ export function copyBoard(board) {
   newBoard.blackPlayer = newBlackPlayer;
 
   newBoard.currentPlayer =
-    currentTurn === "white" ? newBoard.whitePlayer : newBoard.blackPlayer;
+    newBoard.currentTurn === "white"
+      ? newBoard.whitePlayer
+      : newBoard.blackPlayer;
+  return newBoard;
 }

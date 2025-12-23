@@ -1,5 +1,6 @@
 import { attacksOnTile } from "../utils/boardutils.js";
 import { CastleMove } from "../move/move.js";
+import { copyBoard } from "../board/boardfactory.js";
 
 export class Player {
   constructor(board, color) {
@@ -31,19 +32,42 @@ export class Player {
       return m.pieceMoved.color === this.color;
     });
     console.log(this.filterMovesImproved(thisMoves, board));
+    console.log(this.filterMoves(thisMoves, board));
     return this.filterMoves(thisMoves, board);
   }
 
   filterMovesImproved(moveList, board) {
     const legalMoves = [];
-    let bCopy = structuredClone(board);
-    console.log(bCopy);
     for (const move of moveList) {
       if (move.type === "attack" && move.pieceCaptured.type === "king") {
         continue;
       }
-      tryMove(bCopy);
+      let bCopy = copyBoard(board);
+      console.log(bCopy.whitePlayer.moves);
+      console.log(moveList);
+
+      let copiedMove = bCopy.moves.find(
+        (copyMove) =>
+          move.fromTile.x === copyMove.fromTile.x &&
+          move.fromTile.y === copyMove.fromTile.y,
+      );
+      console.log(copiedMove);
+      copiedMove.makeMove(bCopy);
+      bCopy.logger.printBoard(bCopy);
+      const currentKingTile =
+        bCopy.currentTurn === "white"
+          ? bCopy.getTile(bCopy.whitePlayer.king.x, bCopy.whitePlayer.king.y)
+          : bCopy.getTile(bCopy.blackPlayer.king.x, bCopy.blackPlayer.king.y);
+      const noAttacksOnKing = attacksOnTile(
+        bCopy,
+        currentKingTile,
+        bCopy.currentTurn,
+      );
+      if (noAttacksOnKing) {
+        legalMoves.push(move);
+      }
     }
+    return legalMoves;
   }
 
   filterMoves(moveList, board) {
