@@ -172,11 +172,12 @@ export class PromotionMove extends Move {
     const promotedPiece = new Piece(
       "queen",
       this.pieceMoved.color,
-      `${this.pieceMoved.color}_queen`,
+      `url(${this.pieceMoved.color}_queen.svg)`,
       tileTo.x,
       tileTo.y
     );
     tileTo.setPiece(promotedPiece);
+    tileTo.drawTile();
     // Update the board's pieces list
     board.pieces = board.pieces.filter((piece) => piece !== this.pieceMoved);
     board.pieces.push(promotedPiece);

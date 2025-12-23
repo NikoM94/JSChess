@@ -101,10 +101,24 @@ export class Board {
   }
 
   updateDOM(oldX, oldY, x, y) {
+    const move = this.currentPlayer.moves.find((move) => {
+      return (
+        move.fromTile.x == oldX &&
+        move.fromTile.y == oldY &&
+        move.toTile.x == x &&
+        move.toTile.y == y
+      );
+    });
     const newTileElement = document.getElementById(`tile_${x}_${y}`);
-    newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
-    newTileElement.dataset.pieceType = this.selectedPiece.type;
-    newTileElement.dataset.pieceColor = this.selectedPiece.color;
+    if (move.type === "promotion") {
+      newTileElement.style.backgroundImage = `url(../../assets/${move.pieceMoved.color}_queen.svg)`;
+      newTileElement.dataset.pieceType = "queen";
+      newTileElement.dataset.pieceColor = move.pieceMoved.color;
+    } else {
+      newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
+      newTileElement.dataset.pieceType = this.selectedPiece.type;
+      newTileElement.dataset.pieceColor = this.selectedPiece.color;
+    }
     const oldTileElement = document.getElementById(`tile_${oldX}_${oldY}`);
     oldTileElement.style.backgroundImage = "";
     oldTileElement.dataset.pieceColor = "none";
