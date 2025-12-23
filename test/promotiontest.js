@@ -1,8 +1,6 @@
-import { Tile } from "../src/board/tile.js";
 import { Piece } from "../src/piece/piece.js";
-import { PromotionMove, NormalMove, AttackMove } from "../src/move/move.js";
-import { COLORS } from "../src/board/constants.js";
-import { createEmptyTile, createPieceFromFENChar } from "../src/utils/boardutils.js";
+import { PromotionMove } from "../src/move/move.js";
+import { createEmptyTile } from "../src/utils/boardutils.js";
 import assert from "assert";
 
 // Mock document for tests
