@@ -12,7 +12,7 @@ import {
   NormalMove,
   DoubleStep,
   EnPassantMove,
-  PromotionMove
+  PromotionMove,
 } from "../move/move.js";
 
 class Piece {
@@ -145,27 +145,6 @@ class Piece {
         }
       }
     }
-    // if (this.isFirstMove) {
-    //   const x = this.color === "white" ? 7 : 0;
-    //   const maybeRookKingSide = board.getTile(x, 7).getPiece();
-    //   const maybeRookQueenSide = board.getTile(x, 0).getPiece();
-    //   if (maybeRookKingSide.type === "rook") {
-    //     if (maybeRookKingSide.isFirstMove) {
-    //       const kingTo = board.getTile(x, 6);
-    //       const rookTo = board.getTile(x, 5);
-    //       if (kingTo.isEmpty() && rookTo.isEmpty()) {
-    //         for (let y = 5; y <= 6; y++) {
-    //           const tile = board.getTile(x, y);
-    //           // skip if tile is attacked
-    //           // skipKingMoves to avoid infinite recursion
-    //           if (attacksOnTile(board, tile, this.color === "white" ? "black" : "white", { skipKingMoves: true }) === 0) {
-    //
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   calculateKnightMoves(board) {
@@ -210,17 +189,10 @@ class Piece {
     if (destination && destination.isEmpty()) {
       if (x + dir === promotionRank) {
         this.moves.push(
-          new PromotionMove(
-            this,
-            board.getTile(x, y),
-            destination,
-            null,
-          )
+          new PromotionMove(this, board.getTile(x, y), destination, null),
         );
       } else {
-        this.moves.push(
-          new NormalMove(this, board.getTile(x, y), destination),
-        );
+        this.moves.push(new NormalMove(this, board.getTile(x, y), destination));
       }
       // Double step from starting position
       if (x === startRow) {
