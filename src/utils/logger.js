@@ -12,9 +12,10 @@ export class BoardLogger {
           row += "[    ] ";
         } else {
           const piece = tile.getPiece();
+          const symbolType = piece.type === "knight" ? "N" : piece.type.charAt(0).toUpperCase();
           const symbol =
             piece.color.charAt(0).toUpperCase() +
-            piece.type.charAt(0).toUpperCase() +
+            symbolType +
             piece.x +
             piece.y;
           row += `[${symbol}] `;
