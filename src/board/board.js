@@ -80,7 +80,6 @@ export class Board {
         this.clickedTile = null;
       } else {
         const [oldX, oldY] = [this.selectedPiece.x, this.selectedPiece.y];
-        this.updateDOM(oldX, oldY, newX, newY);
         this.updateBoard(oldX, oldY, newX, newY);
       }
     }
@@ -111,9 +110,9 @@ export class Board {
     });
     const newTileElement = document.getElementById(`tile_${x}_${y}`);
     if (move.type === "promotion") {
-      newTileElement.style.backgroundImage = `url(../../assets/${move.pieceMoved.color}_queen.svg)`;
-      newTileElement.dataset.pieceType = "queen";
-      newTileElement.dataset.pieceColor = move.pieceMoved.color;
+      newTileElement.style.backgroundImage = `url(${move.promotedPiece.imageSrc})`;
+      newTileElement.dataset.pieceType = move.promotedPiece.type;
+      newTileElement.dataset.pieceColor = move.promotedPiece.color;
     } else {
       newTileElement.style.backgroundImage = `url(${this.selectedPiece.imageSrc})`;
       newTileElement.dataset.pieceType = this.selectedPiece.type;
@@ -179,9 +178,21 @@ export class Board {
         if (move.pieceCaptured) {
           this.capturedPieces.push(move.pieceCaptured);
         }
+        let promotionOk = false;
+        while (!promotionOk) {
+          let promoteTo = prompt("Pawn Promotion! Enter piece to promote to (queen, rook, bishop, knight):", "queen");
+          promoteTo = promoteTo.toLowerCase();
+          if (["queen", "rook", "bishop", "knight"].includes(promoteTo)) {
+            promotionOk = true;
+            move.promotedTo = promoteTo;
+          } else {
+            alert("Invalid piece type for promotion. Please enter queen, rook, bishop, or knight.");
+          }
+        }
         move.makeMove(this);
         break;
     }
+    this.updateDOM(oldX, oldY, x, y);
     this.nextTurn();
   }
 

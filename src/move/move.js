@@ -155,6 +155,8 @@ export class PromotionMove extends Move {
     super(pieceMoved, fromTile, toTile);
     this.type = "promotion";
     this.pieceCaptured = pieceCaptured;
+    this.promotedTo;
+    this.promotedPiece;
   }
 
   makeMove(board) {
@@ -168,14 +170,14 @@ export class PromotionMove extends Move {
 
     let tileTo = board.getTile(this.toTile.x, this.toTile.y);
 
-    // Promote the pawn to a queen for now
     const promotedPiece = new Piece(
-      "queen",
+      this.promotedTo,
       this.pieceMoved.color,
-      `url(${this.pieceMoved.color}_queen.svg)`,
+      `../../assets/${this.pieceMoved.color}_${this.promotedTo}.svg`,
       tileTo.x,
       tileTo.y
     );
+    this.promotedPiece = promotedPiece;
     tileTo.setPiece(promotedPiece);
     tileTo.drawTile();
     // Update the board's pieces list

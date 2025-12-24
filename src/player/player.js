@@ -20,8 +20,8 @@ export class Player {
     this.pieces = this.updatePieces(board);
     this.king = this.pieces.find((piece) => piece.type === "king" && piece.color === this.color);
     this.isInCheck = this.updateInCheck(board);
-    this.isInCheckMate = this.updateInCheckMate();
     this.moves = this.updateMoves(board);
+    this.isInCheckMate = this.updateInCheckMate();
     this.calculateCastleMoves(board);
   }
 
@@ -54,12 +54,12 @@ export class Player {
    * Improved version of filterMoves that uses a copied board to avoid mutating state.
    * This creates a deep copy of the board, finds the matching move in the copy,
    * executes the move on the copy, and checks for attacks on the king.
-   * 
+   *
    * Key fixes for stale references:
    * 1. copyBoard recalculates all moves AFTER pieces are placed
    * 2. findCopiedMove matches by fromTile, toTile, AND move type
    * 3. The copied board's move references the copied pieces/tiles
-   * 
+   *
    * @param {Array} moveList - List of moves to filter
    * @param {Object} board - The original board
    * @returns {Array} List of legal moves that don't leave the king in check

@@ -24,6 +24,12 @@ export class BoardLogger {
     }
     console.log(this.loggable.currentTurn + "'s turn");
     console.log("EnPassant pawn: ", board.enPassantPawn);
+    if (this.loggable.currentPlayer.isInCheck) {
+      console.log(`${this.loggable.currentTurn} is in check!`);
+    }
+    if (this.loggable.currentPlayer.isInCheckMate) {
+      console.log(`${this.loggable.currentTurn} is in checkmate!`);
+    }
     console.log("Moves for current player:");
     this.loggable.currentPlayer.moves.forEach((move) => {
       const from = move.fromTile;
