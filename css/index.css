@@ -1,0 +1,59 @@
+.dev-interface-container {
+	margin: 20px;
+	display: block;
+	flex-direction: column;
+	gap: 10px;
+	background-color: #2c3e50;
+	color: lightblue;
+	padding: 15px;
+}
+
+.dev-interface-button {
+	cursor: pointer;
+}
+
+.dev-interface-label {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.dev-interface-checkbox {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.fen-input-container {
+	width: 200px;
+	flex-direction: column;
+	padding: 10px;
+	margin-left: 10px;
+}
+
+#load-fen-button {
+	margin-top: 10px;
+	padding: 5px 10px;
+	background-color: #2c3e50;
+	color: lightblue;
+	border: none;
+	font-weight: bold;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+#fen-input {
+	width: 300px;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+body {
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 50%;
+	position: absolute;
+	font-family: Arial, sans-serif;
+	background-color: #1b2536;
+}

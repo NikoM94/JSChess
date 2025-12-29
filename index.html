@@ -14,18 +14,52 @@
     <div class="game-container"></div>
   </span>
   <!-- dev tools interface for printing internal game states in console -->
-  <button class="dev-button" type="submit">dev tools</button>
-  <div class="dev-interface-container">
-    <label for="show-board">board</label>
-    <input type="radio" id="show-board" name="show-board" />
-    <label for="show-moves-white">white moves</label>
-    <input type="radio" id="show-moves-white" name="show-moves-white" />
-    <label for="show-moves-black">black moves</label>
-    <input type="radio" id="show-moves-black" name="show-moves-black" />
-    <label for="show-captured-pieces">captured pieces</label>
-    <input type="radio" id="show-captured-pieces" name="show-captured-pieces" /><br />
+  <div class="fen-input-container">
     <input type="text" id="fen-input" placeholder="enter FEN string" />
-    <button class="dev-button" id="load-fen-button" type="submit">load FEN</button </div>
+    <button class="dev-button" id="load-fen-button" type="submit">load FEN</button>
+  </div>
+  <div class="dev-interface-container">
+    choose debug info to print in console on update:
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-board" name="show-board" checked />
+      <label class="dev-interface-label" for="board-state">board state</label>
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-moves-current" name="show-moves-current" checked />
+      <label class="dev-interface-label" for="opponent-moves">current moves</label>
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-moves-opponent" name="show-moves-opponent"
+        checked />
+      <label class="dev-interface-label" for="opponent-moves">opponent moves</label>
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-captured-pieces" name="show-captured-pieces"
+        checked />
+      <label class="dev-interface-label" for="captured-pieces">captured pieces</label><br />
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-enpassant-pawn" name="show-captured-pieces"
+        checked />
+      <label class="dev-interface-label" for="captured-pieces">en Passant pawn</label><br />
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-checks" name="show-captured-pieces" checked />
+      <label class="dev-interface-label" for="captured-pieces">show checks</label><br />
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-checkmates" name="show-captured-pieces" checked />
+      <label class="dev-interface-label" for="captured-pieces">show checkmate</label><br />
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-turn" name="show-captured-pieces" checked />
+      <label class="dev-interface-label" for="captured-pieces">show turn</label><br />
+    </div>
+    <div>
+      <input class="dev-interface-checkbox" type="checkbox" id="show-turn-count" name="show-captured-pieces" checked />
+      <label class="dev-interface-label" for="captured-pieces">show turncount</label><br />
+    </div>
+  </div>
 </body>
 <script type="module" src="src/index.js"></script>
 <script type="module" src="src/board/board.js"></script>

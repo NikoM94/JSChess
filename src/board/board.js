@@ -1,6 +1,4 @@
-import { Tile } from "./tile.js";
 import { ROWS, COLS, BOARD_PRESET, COLORS, PRESETS, FEN_TYPES } from "./constants.js";
-import { Piece } from "../piece/piece.js";
 import { Player } from "../player/player.js";
 import {
   validCoordinate,
@@ -26,7 +24,7 @@ export class Board {
     this.currentPlayer = this.whitePlayer;
     this.capturedPieces = [];
     this.logger = new BoardLogger(this);
-    this.logger.printBoard(this);
+    this.logger.printInfo(this);
     this.turns = 0;
     this.drawBoard();
   }
@@ -57,12 +55,10 @@ export class Board {
       this.blackPlayer.updatePlayer(this);
       this.capturedPieces = [];
       this.drawBoard();
-      this.logger.printBoard(this);
     });
   };
 
   onClickTile(event) {
-    console.log("Tile clicked");
     const targetElement = event.target;
     if (!targetElement.classList.contains("tile")) return;
     const [newX, newY] = [
@@ -209,7 +205,7 @@ export class Board {
     this.blackPlayer.updatePlayer(this);
     this.selectedPiece = null;
     this.clickedTile = null;
-    this.logger.printBoard(this);
+    this.logger.printInfo(this);
   }
 
   createStartingPosition() {
